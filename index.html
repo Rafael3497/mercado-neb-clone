@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QTCN9HXRNL"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-QTCN9HXRNL');
     </script>
 
@@ -30,7 +28,6 @@
             <div class="logo">
                 <i class="fas fa-shopping-basket"></i>
                 <span>Mercado NEB</span>
-                
             </div>
             <nav>
                 <ul>
@@ -54,39 +51,16 @@
                     <p>Economize mais, compre melhor no Mercado NEB.</p>
                 </div>
             </div>
-
             <div class="slide" style="background: linear-gradient(135deg, #059669, #10b981);">
                 <div class="slide-content">
                     <h1>Apoie nosso projeto</h1>
                     <p style="font-size: 1.5rem; font-weight: 600;">Comprando pelo link você auxilia o núcleo</p>
                 </div>
             </div>
-
             <div class="slide" style="background: linear-gradient(135deg, #7c3aed, #a78bfa);">
                 <div class="slide-content">
                     <h1>Promoções em Tecnologia</h1>
                     <p>Eletrônicos e acessórios com preços imbatíveis.</p>
-                </div>
-            </div>
-
-            <div class="slide" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
-                <div class="slide-content">
-                    <h1>Ofertas que voam! ⚡</h1>
-                    <p>Garanta os melhores preços antes que o estoque acabe.</p>
-                </div>
-            </div>
-
-            <div class="slide" style="background: linear-gradient(135deg, #1e293b, #334155);">
-                <div class="slide-content">
-                    <h1>Curadoria Mercado NEB 🕵️‍♂️</h1>
-                    <p>Selecionamos a dedo os produtos com as melhores avaliações.</p>
-                </div>
-            </div>
-
-            <div class="slide" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
-                <div class="slide-content">
-                    <h1>Os achadinhos mais buscados!</h1>
-                    <p>Tudo o que você quer com o desconto que você precisa.</p>
                 </div>
             </div>
         </div>
@@ -99,27 +73,27 @@
         </div>
 
         <div class="price-filter-wrapper">
-    <button id="togglePriceFilter" class="btn-filter-toggle">
-        <i class="fas fa-filter"></i> Filtrar Preço
-    </button>
-    
-    <div id="priceFilterPanel" class="price-panel hidden">
-        <p>Máximo: <strong>R$ <span id="priceValue">---</span></strong></p>
-        <input type="range" id="priceRange" min="0" step="10">
-   </div>
-</div>
+            <button id="togglePriceFilter" class="btn-filter-toggle">
+                <i class="fas fa-filter"></i> Filtrar Preço
+            </button>
+            <div id="priceFilterPanel" class="price-panel hidden">
+                <p>Máximo: <strong>R$ <span id="priceValue">---</span></strong></p>
+                <input type="range" id="priceRange" min="0" step="10">
+            </div>
+        </div>
 
         <div class="filter-wrapper">
-            <button class="filter-btn active" onclick="filtrarCategoria('todos')">Todos</button>
-            <button class="filter-btn btn-fav-filter" onclick="filtrarFavoritos()"><i class="fas fa-heart"></i> Favoritos</button>
-            <button class="filter-btn" onclick="filtrarCategoria('eletronicos')">Eletrônicos</button>
-            <button class="filter-btn" onclick="filtrarCategoria('casa')">Casa</button>
-            <button class="filter-btn" onclick="filtrarCategoria('saude')">Saúde</button>
-            <button class="filter-btn" onclick="filtrarCategoria('moda')">Moda</button>
-            <button class="filter-btn" onclick="filtrarCategoria('livros')">Livros</button>
-            <button class="filter-btn" onclick="filtrarCategoria('fitness')">Fitness</button>
-            <button class="filter-btn" onclick="filtrarCategoria('escritorio')">Escritório</button>
-           
+            <button class="filter-btn active" data-categoria="todos">Todos</button>
+            <button class="filter-btn btn-fav-filter" id="btn-filtrar-favoritos">
+                <i class="fas fa-heart"></i> Favoritos
+            </button>
+            <button class="filter-btn" data-categoria="eletronicos">Eletrônicos</button>
+            <button class="filter-btn" data-categoria="casa">Casa</button>
+            <button class="filter-btn" data-categoria="saude">Saúde</button>
+            <button class="filter-btn" data-categoria="moda">Moda</button>
+            <button class="filter-btn" data-categoria="livros">Livros</button>
+            <button class="filter-btn" data-categoria="fitness">Fitness</button>
+            <button class="filter-btn" data-categoria="escritorio">Escritório</button>
         </div>
     </section>
 
