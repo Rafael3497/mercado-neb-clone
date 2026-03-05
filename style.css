@@ -442,7 +442,7 @@ footer { background: white; padding: 40px; text-align: center; border-top: 1px s
 @media (max-width: 480px) {
     /* Diminui a altura do container do carrossel */
     .carousel { 
-        height: 220px !important; 
+        height: 200px !important; 
     } 
 
     /* Diminui o título principal do slide */
