@@ -437,3 +437,24 @@ footer { background: white; padding: 40px; text-align: center; border-top: 1px s
 @keyframes fadeOutToast {
     to { opacity: 0; transform: translateY(-20px); }
 }
+
+/* --- AJUSTE ESPECÍFICO PARA CARROSSEL MOBILE --- */
+@media (max-width: 480px) {
+    /* Diminui a altura do container do carrossel */
+    .carousel { 
+        height: 220px !important; 
+    } 
+
+    /* Diminui o título principal do slide */
+    .slide-content h1 { 
+        font-size: 1.6rem !important; 
+        margin-bottom: 8px;
+        line-height: 1.2;
+    }
+
+    /* Diminui o texto de apoio do slide */
+    .slide-content p { 
+        font-size: 0.9rem !important; 
+        line-height: 1.3;
+    }
+}
