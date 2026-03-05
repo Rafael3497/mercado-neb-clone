@@ -67,7 +67,7 @@ function carregarProdutos() {
         const isFav = verificarStatusFavorito(identificador);
         
         return `
-        <div class="card" data-name="${p.nome}" data-category="${p.categoria}">
+        <div class="card" id="${identificador}" data-name="${p.nome}" data-category="${p.categoria}">
             <div class="card-img">
                 <span class="badge-loja ${p.loja}">${lojaNome}</span>
                 <button class="btn-favorite ${isFav ? 'active' : ''}" onclick="toggleFavorito(event, '${identificador}')">
@@ -84,13 +84,25 @@ function carregarProdutos() {
                 </div>
                 <div class="card-actions">
                     <a href="${p.link}" target="_blank" class="btn-buy" onclick="registrarClique('${p.nome}', '${lojaNome}')">Ver na Loja</a>
-                    <button class="btn-share" onclick="compartilharOferta('${p.nome}', '${p.preco}')">
+                    <button class="btn-share" onclick="compartilharOferta('${identificador}', '${p.nome}', '${p.preco}')">
                         <i class="fas fa-share-alt"></i>
                     </button>
                 </div>
             </div>
         </div>
     `}).join('');
+
+    // Se houver um ID na URL ao carregar, rola até ele
+    if (window.location.hash) {
+        setTimeout(() => {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.classList.add('highlight-card'); // Opcional: destaque visual
+                setTimeout(() => target.classList.remove('highlight-card'), 2000);
+            }
+        }, 500);
+    }
 }
 
 function inicializarFiltros() {
@@ -149,18 +161,15 @@ function configurarFiltroPrecoDinamico() {
 
     if (!priceRange || !meusProdutos.length) return;
 
-    // Converte os preços de texto para números para achar o MAIOR
     const precosNumericos = meusProdutos.map(p => 
         parseFloat(p.preco.replace(/\./g, '').replace(',', '.'))
     );
     const maiorPreco = Math.ceil(Math.max(...precosNumericos));
 
-    // Configura o slider com o valor máximo real do banco de dados
     priceRange.max = maiorPreco;
     priceRange.value = maiorPreco;
     priceValue.textContent = maiorPreco.toLocaleString('pt-BR');
 
-    // Listener do Slider
     priceRange.addEventListener('input', () => {
         const maxPrice = parseFloat(priceRange.value);
         priceValue.textContent = maxPrice.toLocaleString('pt-BR');
@@ -172,7 +181,6 @@ function configurarFiltroPrecoDinamico() {
         });
     });
 
-    // Controle do Painel (Abrir/Fechar)
     if (btnToggle) {
         btnToggle.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -219,9 +227,12 @@ window.registrarClique = function(produto, loja) {
     }
 }
 
-window.compartilharOferta = function(titulo, preco) {
-    const urlSite = window.location.href; 
-    const texto = `🌟 *OFERTA NO MERCADO NEB*\n\n*${titulo}*\n*R$ ${preco}*\n\n🛒 *Link:* ${urlSite}`;
+window.compartilharOferta = function(id, titulo, preco) {
+    // Pega a URL base (sem o que vem depois da #) e adiciona o ID do produto
+    const urlBase = window.location.href.split('#')[0]; 
+    const urlComAncora = `${urlBase}#${id}`;
+    
+    const texto = `🌟 *OFERTA NO MERCADO NEB*\n\n*${titulo}*\n*R$ ${preco}*\n\n🛒 *Link da Oferta:* ${urlComAncora}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
 }
 
@@ -231,6 +242,6 @@ window.compartilharOferta = function(titulo, preco) {
 window.onload = function() {
     carregarProdutos();
     inicializarFiltros();
-    configurarFiltroPrecoDinamico(); // Inicia o filtro já calculando o maior valor
+    configurarFiltroPrecoDinamico();
     showSlides();
 };
