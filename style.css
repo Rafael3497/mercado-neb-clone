@@ -151,6 +151,20 @@ nav ul li a:hover::after { width: calc(100% - 24px); }
     border-color: var(--primary);
 }
 
+/* --- BOTÃO DE FAVORITOS (CATEGORIA) --- */
+/* Forçando o ícone a ser sempre vermelho na categoria mobile */
+.btn-fav-filter i {
+    color: #ef4444 !important; 
+    margin-right: 5px;
+    transition: var(--transition);
+}
+
+/* Quando o filtro de favoritos está ativo */
+.btn-fav-filter.active {
+    background: var(--primary) !important;
+    color: white !important;
+}
+
 /* --- GRID E CARDS --- */
 .grid-offers { 
     display: grid; 
@@ -168,7 +182,6 @@ nav ul li a:hover::after { width: calc(100% - 24px); }
     display: flex; 
     flex-direction: column; 
     animation: fadeInCard 0.5s ease backwards;
-    /* Ajuste para Deep Linking */
     scroll-margin-top: 100px;
 }
 
@@ -197,16 +210,7 @@ nav ul li a:hover::after { width: calc(100% - 24px); }
     max-height: 100%;
     object-fit: contain; 
     transition: transform 0.5s ease;
-    will-change: transform;
 }
-
-.highlight-card {
-    box-shadow: 0 0 20px rgba(255, 217, 0, 0.747); /* Brilho dourado temporário */
-    transform: scale(1.02);
-    transition: all 0.5s ease;
-}
-
-.card:hover .card-img img { transform: scale(1.1); }
 
 /* --- ETIQUETAS DE LOJA --- */
 .badge-loja {
@@ -250,21 +254,9 @@ nav ul li a:hover::after { width: calc(100% - 24px); }
     align-items: baseline; 
     gap: 4px; 
     transition: all 0.3s ease; 
-    transform-origin: left center; 
 }
 .price-label { font-size: 0.9rem; }
 .price-value { font-size: 1.5rem; transition: all 0.3s ease; }
-
-@keyframes pricePulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); color: #1b5e20; }
-    100% { transform: scale(1.15); color: #1b5e20; }
-}
-
-.card:hover .price-container {
-    animation: pricePulse 0.4s forwards;
-    text-shadow: 0 2px 10px rgba(46, 125, 50, 0.2);
-}
 
 /* --- BOTÕES DE AÇÃO --- */
 .card-actions {
@@ -300,7 +292,6 @@ nav ul li a:hover::after { width: calc(100% - 24px); }
     align-items: center;
     justify-content: center;
 }
-.btn-share:hover { background: #e2e8f0; color: var(--primary); transform: scale(1.1); }
 
 /* --- FOOTER --- */
 footer { background: white; padding: 40px; text-align: center; border-top: 1px solid #e2e8f0; color: var(--text-light); }
@@ -317,7 +308,6 @@ footer { background: white; padding: 40px; text-align: center; border-top: 1px s
     nav ul li a { font-size: 0.8rem; padding: 5px 8px; }
     .carousel { height: 280px; }
     .grid-offers { grid-template-columns: 1fr; padding: 0 10px; }
-    .btn-share { padding: 16px; }
     .filter-btn { font-size: 0.8rem; padding: 6px 14px; }
 }
 
@@ -361,7 +351,7 @@ footer { background: white; padding: 40px; text-align: center; border-top: 1px s
 
 .price-panel.hidden { display: none !important; }
 
-/* --- CORAÇÃO DE FAVORITO --- */
+/* --- CORAÇÃO DE FAVORITO (NOS CARDS) --- */
 .btn-favorite {
     position: absolute;
     top: 15px;
@@ -378,13 +368,17 @@ footer { background: white; padding: 40px; text-align: center; border-top: 1px s
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     transition: var(--transition);
     z-index: 10;
-    color: #cbd5e1;
+    color: #cbd5e1; /* Cinza apagado por padrão */
 }
 
-.btn-favorite:hover { transform: scale(1.15); background: #fff; }
+/* ESTADO ATIVO DO CORAÇÃO (DENTRO DOS CARDS) */
+/* Seletor reforçado para mobile */
+.btn-favorite.active i,
+.btn-favorite.active {
+    color: #ef4444 !important; /* Força o vermelho */
+}
 
 .btn-favorite.active {
-    color: #ef4444;
     animation: heartBeat 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -423,24 +417,15 @@ footer { background: white; padding: 40px; text-align: center; border-top: 1px s
     border: 1px solid rgba(255, 255, 255, 0.1);
     animation: slideUpToast 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
                fadeOutToast 0.5s ease 2.5s forwards;
-    white-space: nowrap; /* Evita que o texto quebre linha */
+    white-space: nowrap;
 }
 
-/* >>> AJUSTE PARA DISPOSITIVOS MÓVEIS (TOAST) <<< */
+.toast i { color: #ef4444 !important; font-size: 1.1rem; }
+
 @media (max-width: 480px) {
-    .toast {
-        padding: 10px 20px; /* Reduz o preenchimento */
-        font-size: 0.8rem;   /* Diminui o texto */
-        gap: 8px;           /* Aproxima o ícone do texto */
-        bottom: 20px;       /* Sobe um pouco mais para não atrapalhar a barra do navegador */
-    }
-    
-    .toast i {
-        font-size: 0.9rem;  /* Ícone menor no mobile */
-    }
+    .toast { padding: 10px 20px; font-size: 0.8rem; gap: 8px; }
+    .toast i { font-size: 0.9rem; }
 }
-
-.toast i { color: #ef4444; font-size: 1.1rem; }
 
 @keyframes slideUpToast {
     from { opacity: 0; transform: translateY(40px) scale(0.8); }
