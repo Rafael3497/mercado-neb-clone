@@ -68,6 +68,96 @@ nav ul li a::after {
     transition: width 0.3s;
 }
 
+/* --- DESTAQUE DO BOTÃO ACHADINHOS NO MENU --- */
+.nav-link-destaque {
+    background-color: var(--accent); /* Cor amarela/ouro para chamar atenção */
+    color: var(--text) !important;
+    padding: 8px 16px !important;
+    border-radius: 20px;
+    font-weight: 800 !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- DESTAQUE AVANÇADO: BOTÃO ACHADINHOS COM BORDA DINÂMICA --- */
+.nav-link-destaque {
+    background-color: var(--accent); /* Amarelo base */
+    color: var(--text) !important;
+    padding: 8px 16px !important;
+    border-radius: 20px;
+    font-weight: 800 !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+    position: relative; /* Necessário para posicionar a borda animada */
+    z-index: 1; /* Garante que o texto fique acima da borda */
+    overflow: hidden; /* Corta o brilho excedente */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.nav-link-destaque i {
+    color: #f59e0b; /* Laranja do Raio */
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+/* --- A LINHA DINÂMICA CIRCULANTE (Pseudo-elemento) --- */
+.nav-link-destaque::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%; /* Mais largo que o botão para girar */
+    height: 200%; /* Mais alto que o botão para girar */
+    background: conic-gradient(
+        transparent, 
+        rgba(255, 255, 255, 0.8), /* Cor do brilho circulante */
+        transparent 30%
+    );
+    transform: translate(-50%, -50%) rotate(0deg);
+    animation: rotateGlow 3s linear infinite; /* A mágica do movimento */
+    z-index: -1; /* Fica atrás do texto/ícone */
+}
+
+/* --- A MÁGICA DA ROTAÇÃO --- */
+@keyframes rotateGlow {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* --- EFEITO AO PASSAR O MOUSE (Hover) --- */
+.nav-link-destaque:hover {
+    transform: scale(1.05);
+    background-color: #fcd34d; /* Amarelo mais claro no hover */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-link-destaque:hover::before {
+    animation-duration: 1.5s; /* Brilho circula mais rápido no hover */
+    background: conic-gradient(
+        transparent, 
+        rgba(29, 78, 216, 0.8), /* Muda cor do brilho para o azul do site no hover */
+        transparent 30%
+    );
+}
+
+.nav-link-destaque:hover i {
+    transform: scale(1.2) rotate(10deg);
+    color: var(--primary); /* Raio fica azul no hover */
+}
+
+/* --- AJUSTES MOBILE --- */
+@media (max-width: 480px) {
+    .nav-link-destaque {
+        padding: 6px 12px !important;
+        font-size: 0.85rem !important;
+    }
+}
+
 nav ul li a:hover::after { width: calc(100% - 24px); }
 
 .nav-whatsapp { color: #25d366 !important; }
