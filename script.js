@@ -1,162 +1,8 @@
-/* ==========================================
-   BANCO DE DADOS DE PRODUTOS
-   ========================================== */
-const meusProdutos = [
-    {
-        id: "p56",
-        nome: "Best Vegan - Pote 500g - Sabor Leite",
-        desc: "Suplemento alimentar de alta qualidade, 100% vegetal, rico em vitaminas e minerais.",
-        preco: "129,77",
-        categoria: "saude",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_2X_789213-MLU78239361549_082024-F.webp",
-        link: "https://meli.la/29U6MSe"
-    },
-    {
-        id: "p55",
-        nome: "Best Vegan - 500g Bolo de Banana",
-        desc: "Proteína vegana sabor bolo de banana. Ideal para dietas equilibradas.",
-        preco: "118,00",
-        categoria: "saude",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_2X_714987-MLA99402296932_112025-F.webp",
-        link: "https://meli.la/29U6MSe"
-    },
-    {
-        id: "p54",
-        nome: "Faixa de Graduação Infantil Haganah",
-        desc: "Faixa branca M3 para Karate, Jiu Jitsu e Judô. Tradição e excelência.",
-        preco: "35,49",
-        categoria: "fitness",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_2X_681541-MLA99600105554_122025-F.webp",
-        link: "https://meli.la/1vNTakV"
-    },
-    {
-        id: "p53",
-        nome: "Jogo War Edição Especial Grow",
-        desc: "Versão de luxo com miniaturas de soldados e tanques. O melhor jogo de estratégia.",
-        preco: "138,13",
-        categoria: "casa",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_2X_954039-MLA99943624993_112025-F.webp",
-        link: "https://meli.la/2yFsd6u"
-    },
-    {
-        id: "p52",
-        nome: "Shampoo Vichy Dercos Energy+",
-        desc: "Tratamento antiqueda de 400g com Aminexil e Vitamina E. Fortalece os fios.",
-        preco: "99,90",
-        categoria: "casa",
-        loja: "amazon",
-        img: "https://m.media-amazon.com/images/I/51b74hm3qrL._AC_SX342_SY445_QL70_ML2_.jpg",
-        link: "https://amzn.to/4aNpIT3"
-    },
-    {
-        id: "p51",
-        nome: "24 Colheres de Sopa Aço Inox Luna",
-        desc: "Conjunto elegante com cabo plástico vermelho. Funcional para qualquer ocasião.",
-        preco: "44,90",
-        categoria: "casa",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_906495-MLB106591516242_022026-O.webp",
-        link: "https://meli.la/1Kv9Mgv"
-    },
-    {
-        id: "p50",
-        nome: "Kit 2 Telas Mosquiteiro Protetora",
-        desc: "Telas retráteis de 36cm para cobrir bolos e pães com higiene e praticidade.",
-        preco: "28,10",
-        categoria: "casa",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_663318-MLB82423808068_022025-O.webp",
-        link: "https://meli.la/2q896tP"
-    },
-    {
-        id: "p49",
-        nome: "Mochila Masculina Impermeável USB",
-        desc: "Compartimento para notebook, leve e resistente. Ideal para faculdade.",
-        preco: "78,90",
-        categoria: "moda",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_932274-MLB104125679132_012026-O-mochila-masculina-faculdade-impermeavel-notebook-entrada-usb.webp",
-        link: "https://meli.la/2kfHCrL"
-    },
-    {
-        id: "p48",
-        nome: "A Fantástica Fábrica de Chocolate",
-        desc: "Edição especial de luxo com capa inédita de Isadora Zeferino.",
-        preco: "30,18",
-        categoria: "livros",
-        loja: "amazon",
-        img: "https://m.media-amazon.com/images/I/81BX9xwJ1jL._AC_UF1000,1000_QL80_FMwebp_.jpg",
-        link: "https://amzn.to/4aL7LVf"
-    },
-    {
-        id: "p47",
-        nome: "Megafone Amplificador de Voz Portátil",
-        desc: "Com microfone, USB e rádio. Perfeito para guias, professores e palestras.",
-        preco: "68,78",
-        categoria: "eletronicos",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_700426-MLB92051578723_092025-O.webp",
-        link: "https://meli.la/2ynMFjf"
-    },
-    {
-        id: "p46",
-        nome: "Garrafa Térmica 1L com LED",
-        desc: "Cabo de madeira e termômetro digital para café e chás. Design requintado.",
-        preco: "46,93",
-        categoria: "casa",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_658148-MLB89993492671_082025-O-garrafa-termica-1-litro-com-termmetro-led-para-chas-cafe.webp",
-        link: "https://meli.la/1mB3Cix"
-    },
-    {
-        id: "p45",
-        nome: "Buba Pote Térmico Azul Degradê",
-        desc: "Conserva alimentos por mais de 5 horas. Acompanha colher, ideal para passeios.",
-        preco: "89,91",
-        categoria: "casa",
-        loja: "amazon",
-        img: "https://m.media-amazon.com/images/I/514yQd52YoL._AC_UF894,1000_QL80_FMwebp_.jpg",
-        link: "https://amzn.to/4r2ZLDO"
-    },
-    {
-        id: "p44",
-        nome: "Buba Pote Térmico Gumy Verde",
-        desc: "Design ergonômico com talher incluso. Mantém a temperatura quente ou fria.",
-        preco: "95,30",
-        categoria: "casa",
-        loja: "amazon",
-        img: "https://m.media-amazon.com/images/I/41D0T4KyttS._AC_UF894,1000_QL80_FMwebp_.jpg",
-        link: "https://amzn.to/4cVEMzo"
-    },
-    {
-        id: "p43",
-        nome: "Lanterna T9 Apfer",
-        desc: "Potência e versatilidade extrema para trilhas e aventuras ao ar livre.",
-        preco: "49,99",
-        categoria: "eletronicos",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_953370-MLA107171490859_022026-O.webp",
-        link: "https://meli.la/2cqma9Y"
-    },
-    {
-        id: "p42",
-        nome: "Kit 12 Pares Meia Soquete Unissex",
-        desc: "Ajuste firme e conforto para academia, caminhadas e uso diário.",
-        preco: "26,90",
-        categoria: "moda",
-        loja: "mercadolivre",
-        img: "https://http2.mlstatic.com/D_NQ_NP_893559-MLB98742398254_112025-O-kit-12-pares-meia-soquete-cano-curto-unissex-adulto-premium.webp",
-        link: "https://meli.la/32AJA45"
-    }
-
-];
+// 1. IMPORTAÇÃO DOS DADOS
+import { meusProdutos } from './produtos.js';
 
 /* ==========================================
-   SISTEMA DE FAVORITOS (MERCADO NEB)
+   SISTEMA DE FAVORITOS
    ========================================== */
 let listaFavoritosNEB = [];
 try {
@@ -180,7 +26,7 @@ function mostrarNotificacao(mensagem) {
     setTimeout(() => { toast.remove(); }, 3000);
 }
 
-function toggleFavorito(event, produtoId) {
+window.toggleFavorito = function(event, produtoId) {
     if (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -202,7 +48,6 @@ function toggleFavorito(event, produtoId) {
     }
     localStorage.setItem('mercado_neb_favs', JSON.stringify(listaFavoritosNEB));
     
-    // Se estiver na aba de favoritos, atualiza a visão em tempo real
     if (document.querySelector('.btn-fav-filter.active')) {
         filtrarFavoritos(); 
     }
@@ -211,7 +56,6 @@ function toggleFavorito(event, produtoId) {
 /* ==========================================
    CARREGAMENTO E FILTROS PROFISSIONAIS
    ========================================== */
-
 function carregarProdutos() {
     const grid = document.getElementById('offersGrid');
     if (!grid) return;
@@ -249,23 +93,16 @@ function carregarProdutos() {
     `}).join('');
 }
 
-// NOVO: Inicializador de Event Listeners Profissional
 function inicializarFiltros() {
     const botoes = document.querySelectorAll('.filter-btn');
-    
     botoes.forEach(btn => {
         btn.addEventListener('click', (e) => {
-            // Remove 'active' de todos
             botoes.forEach(b => b.classList.remove('active'));
-            // Adiciona no clicado
             e.currentTarget.classList.add('active');
-
-            // Verifica se é o botão de favoritos ou categoria comum
             if (e.currentTarget.id === 'btn-filtrar-favoritos') {
                 filtrarFavoritos();
             } else {
-                const categoria = e.currentTarget.dataset.categoria;
-                aplicarFiltroCategoria(categoria);
+                aplicarFiltroCategoria(e.currentTarget.dataset.categoria);
             }
         });
     });
@@ -282,13 +119,10 @@ function aplicarFiltroCategoria(cat) {
 function filtrarFavoritos() {
     const cards = document.querySelectorAll('.card');
     let encontrouAlgum = false;
-
     cards.forEach(card => {
         const btnFav = card.querySelector('.btn-favorite');
-        // Extrai o ID do onclick usando regex de forma segura
         const match = btnFav.getAttribute('onclick').match(/'([^']+)'/);
         const idDoCard = match ? match[1] : null;
-
         if (listaFavoritosNEB.includes(idDoCard)) {
             card.style.display = "flex";
             encontrouAlgum = true;
@@ -296,7 +130,6 @@ function filtrarFavoritos() {
             card.style.display = "none";
         }
     });
-
     if (!encontrouAlgum) {
         mostrarNotificacao("Nenhum favorito salvo ainda! ❤️");
         aplicarFiltroCategoria('todos');
@@ -306,22 +139,72 @@ function filtrarFavoritos() {
 }
 
 /* ==========================================
-   UTILITÁRIOS E AUXILIARES
+   FILTRO DE PREÇO (DINÂMICO)
    ========================================== */
+function configurarFiltroPrecoDinamico() {
+    const btnToggle = document.getElementById('togglePriceFilter');
+    const panel = document.getElementById('priceFilterPanel');
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
 
-function registrarClique(produto, loja) {
-    if (typeof gtag === 'function') {
-        gtag('event', 'clique_produto', { 'event_label': produto, 'loja_destino': loja });
+    if (!priceRange || !meusProdutos.length) return;
+
+    // Converte os preços de texto para números para achar o MAIOR
+    const precosNumericos = meusProdutos.map(p => 
+        parseFloat(p.preco.replace(/\./g, '').replace(',', '.'))
+    );
+    const maiorPreco = Math.ceil(Math.max(...precosNumericos));
+
+    // Configura o slider com o valor máximo real do banco de dados
+    priceRange.max = maiorPreco;
+    priceRange.value = maiorPreco;
+    priceValue.textContent = maiorPreco.toLocaleString('pt-BR');
+
+    // Listener do Slider
+    priceRange.addEventListener('input', () => {
+        const maxPrice = parseFloat(priceRange.value);
+        priceValue.textContent = maxPrice.toLocaleString('pt-BR');
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const priceText = card.querySelector('.price-value').textContent;
+            const price = parseFloat(priceText.replace(/\./g, '').replace(',', '.'));
+            card.style.display = (price <= maxPrice) ? "flex" : "none";
+        });
+    });
+
+    // Controle do Painel (Abrir/Fechar)
+    if (btnToggle) {
+        btnToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            panel.classList.toggle('hidden');
+        });
+        document.addEventListener('click', (e) => {
+            if (!panel.contains(e.target) && e.target !== btnToggle) {
+                panel.classList.add('hidden');
+            }
+        });
     }
 }
 
-function compartilharOferta(titulo, preco) {
-    const urlSite = window.location.href; 
-    const texto = `🌟 *OFERTA NO MERCADO NEB*\n\n*${titulo}*\n*R$ ${preco}*\n\n🛒 *Link:* ${urlSite}`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
+/* ==========================================
+   CARROSSEL, BUSCA E UTILITÁRIOS
+   ========================================== */
+let slideIndex = 0;
+function showSlides() {
+    let slides = document.getElementsByClassName("slide");
+    if (slides.length === 0) return;
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].style.opacity = "0";
+        slides[i].classList.remove("active");
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) slideIndex = 1;
+    slides[slideIndex - 1].style.opacity = "1";
+    slides[slideIndex - 1].classList.add("active");
+    setTimeout(showSlides, 6000);
 }
 
-function filterOffers() {
+window.filterOffers = function() {
     let input = document.getElementById('searchInput').value.toLowerCase();
     let cards = document.querySelectorAll('.card');
     cards.forEach(card => {
@@ -330,14 +213,24 @@ function filterOffers() {
     });
 }
 
+window.registrarClique = function(produto, loja) {
+    if (typeof gtag === 'function') {
+        gtag('event', 'clique_produto', { 'event_label': produto, 'loja_destino': loja });
+    }
+}
+
+window.compartilharOferta = function(titulo, preco) {
+    const urlSite = window.location.href; 
+    const texto = `🌟 *OFERTA NO MERCADO NEB*\n\n*${titulo}*\n*R$ ${preco}*\n\n🛒 *Link:* ${urlSite}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
+}
+
 /* ==========================================
-   INICIALIZAÇÃO (WINDOW.ONLOAD)
+   INICIALIZAÇÃO GLOBAL
    ========================================== */
 window.onload = function() {
-    // Carrega produtos imediatamente ou após skeleton
     carregarProdutos();
     inicializarFiltros();
-    
-    // Se você tiver um slider, chame-o aqui
-    // showSlides(); 
+    configurarFiltroPrecoDinamico(); // Inicia o filtro já calculando o maior valor
+    showSlides();
 };
