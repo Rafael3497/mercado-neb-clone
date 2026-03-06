@@ -489,7 +489,7 @@
     <script>
         const CONFIG = {
             API_URL: "/.netlify/functions/mercadolivre",
-            LIMITE: 20,
+            LIMITE: 50,
         };
 
         // Mapeamento de ID → nome legível
@@ -557,8 +557,8 @@
                 const data = await res.json();
                 if (data.error) throw new Error(data.error);
 
-                // Limita a 100 produtos = 5 páginas de 20
-                estado.total      = Math.min(data.total, 100);
+                // Limita a 200 produtos = 4 páginas de 50
+                estado.total      = Math.min(data.total, 200);
                 estado.carregando = false;
 
                 if (!data.items || data.items.length === 0) {
