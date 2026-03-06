@@ -248,6 +248,8 @@ window.onload = function() {
 
 // ======= SCRIPT DO FRONT-END (Lógica do Client-Side) =======
 
+// ======= SCRIPT DO FRONT-END (Lógica do Client-Side) =======
+
 const CONFIG = {
     API_URL: "/.netlify/functions/mercadolivre",
     LIMITE: 20,
@@ -301,14 +303,13 @@ async function fetchML() {
     conteudo.innerHTML = renderLoading();
     paginacao.style.display = "none";
 
-    const busca = document.getElementById("ml-busca").value.trim();
     const categoria = document.getElementById("ml-categoria").value;
     const offset = estado.pagina * CONFIG.LIMITE;
 
     const params = new URLSearchParams({
         limite: CONFIG.LIMITE,
         offset,
-        ...(busca ? { q: busca } : { categoria }),
+        categoria
     });
 
     try {
@@ -321,7 +322,7 @@ async function fetchML() {
         estado.carregando = false;
 
         if (!data.items || data.items.length === 0) {
-            conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado. Tente outra busca.</div>`;
+            conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado nesta categoria. Tente outra.</div>`;
             return;
         }
 
@@ -380,4 +381,3 @@ function renderPaginacao() {
 function renderLoading() {
     return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
 }
-

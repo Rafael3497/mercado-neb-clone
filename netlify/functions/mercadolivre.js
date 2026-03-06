@@ -50,12 +50,11 @@ exports.handler = async (event, context) => {
   };
 
   const params    = event.queryStringParameters || {};
-  const categoria = params.categoria || "todas";
+  const categoria = params.categoria || "MLB1051"; // Default para Celulares se vier vazio
   const limite    = Math.min(parseInt(params.limite) || 20, 50);
-  const busca     = params.q || ""; 
   const offset    = parseInt(params.offset) || 0;
 
-  // Função auxiliar BLINDADA para padronizar e processar buscas nativas
+  // Função auxiliar BLINDADA para processar buscas nativas (usada como fallback)
   async function fetchSearch(url) {
     const res = await fetch(url, { headers: authHeaders });
     if (!res.ok) {
@@ -65,12 +64,10 @@ exports.handler = async (event, context) => {
     const data = await res.json();
     const total = data.paging?.total || 0;
     
-    // Programação defensiva: garante que 'data.results' existe
     const parsedItems = (data.results || []).map(item => {
-      // Fallback: se não vier permalink, monta a URL manualmente usando o ID do produto
       const permalink = item.permalink || `https://produto.mercadolivre.com.br/MLB-${item.id.replace('MLB', '')}`;
       const sep = permalink.includes("?") ? "&" : "?";
-      const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_busca`;
+      const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_categoria`;
       
       const imagem = item.thumbnail ? item.thumbnail.replace("-I.jpg", "-O.jpg") : null;
 
@@ -97,80 +94,65 @@ exports.handler = async (event, context) => {
     let items = [];
     let totalItems = 0;
 
-    if (busca !== "") {
-      // FLUXO 1: O utilizador digitou algo na barra de pesquisa
-      const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(busca)}&limit=${limite}&offset=${offset}`;
-      const res = await fetchSearch(url);
-      items = res.items; totalItems = res.total;
-    } 
-    else if (categoria === "todas") {
-      // FLUXO 2: Opção "Todas as Categorias" (Blindada contra quedas)
-      const url = `https://api.mercadolibre.com/sites/MLB/search?q=promoção&limit=${limite}&offset=${offset}`;
-      const res = await fetchSearch(url);
-      items = res.items; totalItems = res.total;
-    } 
-    else {
-      // FLUXO 3: Seleção de Categoria específica
-      const highlightsUrl = `https://api.mercadolibre.com/highlights/MLB/category/${categoria}`;
-      const highlightsRes = await fetch(highlightsUrl, { headers: authHeaders });
+    // FLUXO ÚNICO: Seleção de Categoria
+    const highlightsUrl = `https://api.mercadolibre.com/highlights/MLB/category/${categoria}`;
+    const highlightsRes = await fetch(highlightsUrl, { headers: authHeaders });
 
-      if (highlightsRes.ok) {
-        const highlightsData = await highlightsRes.json();
-        const allProductIds = (highlightsData.content || []).map(p => p.id);
-        totalItems = allProductIds.length;
-        const productIds = allProductIds.slice(offset, offset + limite);
+    if (highlightsRes.ok) {
+      const highlightsData = await highlightsRes.json();
+      const allProductIds = (highlightsData.content || []).map(p => p.id);
+      totalItems = allProductIds.length;
+      const productIds = allProductIds.slice(offset, offset + limite);
 
-        if (productIds.length > 0) {
-          const itemPromises = productIds.map(async (productId) => {
-            try {
-              const [productRes, itemRes] = await Promise.all([
-                fetch(`https://api.mercadolibre.com/products/${productId}`, { headers: authHeaders }),
-                fetch(`https://api.mercadolibre.com/products/${productId}/items?limit=1`, { headers: authHeaders }),
-              ]);
-              if (!productRes.ok || !itemRes.ok) return null;
-              
-              const productData = await productRes.json();
-              const itemData = await itemRes.json();
-              const itemInfo = itemData.results?.[0];
-              if (!itemInfo) return null;
+      if (productIds.length > 0) {
+        const itemPromises = productIds.map(async (productId) => {
+          try {
+            const [productRes, itemRes] = await Promise.all([
+              fetch(`https://api.mercadolibre.com/products/${productId}`, { headers: authHeaders }),
+              fetch(`https://api.mercadolibre.com/products/${productId}/items?limit=1`, { headers: authHeaders }),
+            ]);
+            if (!productRes.ok || !itemRes.ok) return null;
+            
+            const productData = await productRes.json();
+            const itemData = await itemRes.json();
+            const itemInfo = itemData.results?.[0];
+            if (!itemInfo) return null;
 
-              const permalink = itemInfo.permalink || `https://produto.mercadolivre.com.br/MLB-${itemInfo.item_id.replace('MLB', '')}`;
-              const sep = permalink.includes("?") ? "&" : "?";
-              const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_categoria`;
-              
-              const imagem = productData.pictures?.[0]?.url || productData.pictures?.[0]?.thumbnail || null;
+            const permalink = itemInfo.permalink || `https://produto.mercadolivre.com.br/MLB-${itemInfo.item_id.replace('MLB', '')}`;
+            const sep = permalink.includes("?") ? "&" : "?";
+            const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_categoria`;
+            
+            const imagem = productData.pictures?.[0]?.url || productData.pictures?.[0]?.thumbnail || null;
 
-              return {
-                id:             itemInfo.item_id,
-                titulo:         productData.name || productData.family_name || itemInfo.item_id,
-                preco:          itemInfo.price,
-                preco_original: itemInfo.original_price || null,
-                desconto:       itemInfo.original_price ? Math.round((1 - itemInfo.price / itemInfo.original_price) * 100) : null,
-                moeda:          itemInfo.currency_id,
-                link:           linkAfiliado,
-                imagem,
-                vendedor:       "",
-                condicao:       itemInfo.condition === "new" ? "Novo" : "Usado",
-                frete_gratis:   itemInfo.shipping?.free_shipping || false,
-                disponivel:     true,
-                vendidos:       0,
-              };
-            } catch { return null; }
-          });
-          items = (await Promise.all(itemPromises)).filter(Boolean);
-        }
-      } else {
-        // FLUXO DE SEGURANÇA (FALLBACK)
-        const url = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${limite}&offset=${offset}`;
-        const res = await fetchSearch(url);
-        items = res.items; totalItems = res.total;
+            return {
+              id:             itemInfo.item_id,
+              titulo:         productData.name || productData.family_name || itemInfo.item_id,
+              preco:          itemInfo.price,
+              preco_original: itemInfo.original_price || null,
+              desconto:       itemInfo.original_price ? Math.round((1 - itemInfo.price / itemInfo.original_price) * 100) : null,
+              moeda:          itemInfo.currency_id,
+              link:           linkAfiliado,
+              imagem,
+              vendedor:       "",
+              condicao:       itemInfo.condition === "new" ? "Novo" : "Usado",
+              frete_gratis:   itemInfo.shipping?.free_shipping || false,
+              disponivel:     true,
+              vendidos:       0,
+            };
+          } catch { return null; }
+        });
+        items = (await Promise.all(itemPromises)).filter(Boolean);
       }
+    } else {
+      // FLUXO DE SEGURANÇA (FALLBACK): Se a categoria específica der 404 no endpoint de destaques
+      const url = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${limite}&offset=${offset}`;
+      const res = await fetchSearch(url);
+      items = res.items; totalItems = res.total;
     }
 
     return { statusCode: 200, headers, body: JSON.stringify({ total: totalItems, items }) };
 
   } catch (err) {
-    // Agora o erro 500 enviará o motivo exato do crash para facilitar debug no painel da Netlify
     return { statusCode: 500, headers, body: JSON.stringify({ error: "Erro interno do Servidor", details: err.message }) };
   }
 };
