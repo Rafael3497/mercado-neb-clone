@@ -55,20 +55,23 @@ exports.handler = async (event, context) => {
   const busca     = params.q || ""; 
   const offset    = parseInt(params.offset) || 0;
 
-  // Função auxiliar para padronizar e processar buscas nativas
+  // Função auxiliar BLINDADA para padronizar e processar buscas nativas
   async function fetchSearch(url) {
     const res = await fetch(url, { headers: authHeaders });
-    if (!res.ok) throw new Error(`Erro API Busca: ${res.status}`);
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Erro API Busca (${res.status}): ${errText}`);
+    }
     const data = await res.json();
     const total = data.paging?.total || 0;
     
-    const parsedItems = data.results.map(item => {
-      // Usa o permalink canônico para blindar a comissão contra redirecionamentos
-      const permalink = item.permalink;
+    // Programação defensiva: garante que 'data.results' existe
+    const parsedItems = (data.results || []).map(item => {
+      // Fallback: se não vier permalink, monta a URL manualmente usando o ID do produto
+      const permalink = item.permalink || `https://produto.mercadolivre.com.br/MLB-${item.id.replace('MLB', '')}`;
       const sep = permalink.includes("?") ? "&" : "?";
       const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_busca`;
       
-      // Otimiza a resolução da imagem substituindo a terminação
       const imagem = item.thumbnail ? item.thumbnail.replace("-I.jpg", "-O.jpg") : null;
 
       return {
@@ -101,8 +104,8 @@ exports.handler = async (event, context) => {
       items = res.items; totalItems = res.total;
     } 
     else if (categoria === "todas") {
-      // FLUXO 2: Opção "Todas as Categorias"
-      const url = `https://api.mercadolibre.com/sites/MLB/search?q=ofertas&limit=${limite}&offset=${offset}`;
+      // FLUXO 2: Opção "Todas as Categorias" (Blindada contra quedas)
+      const url = `https://api.mercadolibre.com/sites/MLB/search?q=promoção&limit=${limite}&offset=${offset}`;
       const res = await fetchSearch(url);
       items = res.items; totalItems = res.total;
     } 
@@ -112,7 +115,6 @@ exports.handler = async (event, context) => {
       const highlightsRes = await fetch(highlightsUrl, { headers: authHeaders });
 
       if (highlightsRes.ok) {
-        // Se a API tiver achadinhos curados para esta categoria, seguimos o fluxo normal
         const highlightsData = await highlightsRes.json();
         const allProductIds = (highlightsData.content || []).map(p => p.id);
         totalItems = allProductIds.length;
@@ -132,9 +134,7 @@ exports.handler = async (event, context) => {
               const itemInfo = itemData.results?.[0];
               if (!itemInfo) return null;
 
-              // CORREÇÃO CRÍTICA: Extração do permalink diretamente da resposta do item
-              // Isso evita redirecionamentos 301 do ML que poderiam limpar o seu AFILIADO_ID
-              const permalink = itemInfo.permalink;
+              const permalink = itemInfo.permalink || `https://produto.mercadolivre.com.br/MLB-${itemInfo.item_id.replace('MLB', '')}`;
               const sep = permalink.includes("?") ? "&" : "?";
               const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_categoria`;
               
@@ -170,6 +170,7 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers, body: JSON.stringify({ total: totalItems, items }) };
 
   } catch (err) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: "Erro interno", details: err.message }) };
+    // Agora o erro 500 enviará o motivo exato do crash para facilitar debug no painel da Netlify
+    return { statusCode: 500, headers, body: JSON.stringify({ error: "Erro interno do Servidor", details: err.message }) };
   }
 };
