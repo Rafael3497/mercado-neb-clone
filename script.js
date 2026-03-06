@@ -245,3 +245,138 @@ window.onload = function() {
     configurarFiltroPrecoDinamico();
     showSlides();
 };
+
+// ======= SCRIPT DO FRONT-END (Lógica do Client-Side) =======
+
+const CONFIG = {
+    API_URL: "/.netlify/functions/mercadolivre",
+    LIMITE: 20,
+};
+
+let estado = {
+    aberto: false,
+    pagina: 0,
+    total: 0,
+    carregando: false,
+};
+
+// Funções globais necessárias no HTML (Atribuídas ao window)
+window.abrirAchadinhos = function() {
+    if (!estado.aberto) window.toggleAchadinhos();
+};
+
+window.toggleAchadinhos = function() {
+    estado.aberto = !estado.aberto;
+    const painel = document.getElementById("achadinhos-painel");
+    const btn = document.getElementById("btn-achadinhos");
+    painel.classList.toggle("aberto", estado.aberto);
+    btn.querySelector('.btn-badge').textContent = estado.aberto ? "FECHAR" : "AO VIVO";
+
+    if (estado.aberto && estado.total === 0) {
+        window.buscarML();
+    }
+};
+
+window.buscarML = async function() {
+    if (estado.carregando) return;
+    estado.pagina = 0;
+    await fetchML();
+};
+
+window.paginaML = async function(direcao) {
+    const novaPagina = estado.pagina + direcao;
+    const maxPagina = Math.ceil(estado.total / CONFIG.LIMITE) - 1;
+    if (novaPagina < 0 || novaPagina > maxPagina) return;
+    estado.pagina = novaPagina;
+    await fetchML();
+    document.getElementById("secao-achadinhos").scrollIntoView({ behavior: "smooth" });
+};
+
+async function fetchML() {
+    if (estado.carregando) return;
+    estado.carregando = true;
+
+    const conteudo = document.getElementById("ml-conteudo");
+    const paginacao = document.getElementById("ml-paginacao");
+    conteudo.innerHTML = renderLoading();
+    paginacao.style.display = "none";
+
+    const busca = document.getElementById("ml-busca").value.trim();
+    const categoria = document.getElementById("ml-categoria").value;
+    const offset = estado.pagina * CONFIG.LIMITE;
+
+    const params = new URLSearchParams({
+        limite: CONFIG.LIMITE,
+        offset,
+        ...(busca ? { q: busca } : { categoria }),
+    });
+
+    try {
+        const res = await fetch(`${CONFIG.API_URL}?${params}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        estado.total = data.total;
+        estado.carregando = false;
+
+        if (!data.items || data.items.length === 0) {
+            conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado. Tente outra busca.</div>`;
+            return;
+        }
+
+        conteudo.innerHTML = renderGrid(data.items);
+        renderPaginacao();
+
+    } catch (err) {
+        estado.carregando = false;
+        conteudo.innerHTML = `
+            <div class="ml-erro">
+                ⚠️ Não foi possível carregar as ofertas.<br>
+                <small>${err.message}</small><br><br>
+                <button onclick="buscarML()" style="
+                    background:#c0392b;color:#fff;border:none;
+                    padding:8px 18px;border-radius:8px;cursor:pointer;font-size:0.9rem;
+                ">Tentar novamente</button>
+            </div>`;
+    }
+}
+
+function renderGrid(items) {
+    return `<div class="ml-grid">${items.map(renderCard).join("")}</div>`;
+}
+
+function renderCard(item) {
+    const preco = item.preco?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    const precOriginal = item.preco_original?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    return `
+        <a class="ml-card" href="${item.link}" target="_blank" rel="noopener noreferrer">
+            ${item.condicao === "Novo" ? '<span class="ml-badge-novo">NOVO</span>' : ""}
+            <img class="ml-card-img" src="${item.imagem}" alt="${item.titulo}" loading="lazy"
+                onerror="this.style.display='none'" />
+            <div class="ml-card-body">
+                <div class="ml-card-titulo">${item.titulo}</div>
+                ${item.preco_original ? `<div class="ml-card-original">${precOriginal}</div>` : ""}
+                <div class="ml-card-preco">${preco}</div>
+                ${item.desconto ? `<span class="ml-card-desconto">-${item.desconto}% OFF</span>` : ""}
+                ${item.frete_gratis ? `<div class="ml-card-frete">✅ Frete grátis</div>` : ""}
+            </div>
+        </a>
+    `;
+}
+
+function renderPaginacao() {
+    const totalPaginas = Math.ceil(estado.total / CONFIG.LIMITE);
+    if (totalPaginas <= 1) return;
+
+    const paginacao = document.getElementById("ml-paginacao");
+    document.getElementById("ml-info-pagina").textContent = `Página ${estado.pagina + 1} de ${totalPaginas}`;
+    document.getElementById("ml-btn-anterior").disabled = estado.pagina === 0;
+    document.getElementById("ml-btn-proximo").disabled = estado.pagina >= totalPaginas - 1;
+    paginacao.style.display = "flex";
+}
+
+function renderLoading() {
+    return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
+}
