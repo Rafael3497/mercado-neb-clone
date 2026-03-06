@@ -11,25 +11,149 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercado NEB | Mais Vendidos</title>
-
+    <title>Mercado NEB | As Melhores Ofertas</title>
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>">
 
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+    <!-- ======= ESTILOS DO COMPONENTE ACHADINHOS ======= -->
     <style>
-      /* ── Grid de produtos ── */
-      .mv-grid {
+      /* ---- Seção Achadinhos wrapper ---- */
+      #secao-achadinhos {
+        margin-bottom: 48px;
+        padding: 28px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      }
+
+      .achadinhos-intro {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+
+      .achadinhos-intro p {
+        margin: 0;
+        color: #666;
+        font-size: 0.95rem;
+      }
+
+      /* ---- Botão principal ---- */
+      #btn-achadinhos {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #ffe600;
+        color: #222;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        border-radius: 30px;
+        padding: 14px 28px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 3px 12px rgba(52,131,250,0.18);
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 0.3px;
+        font-family: 'Inter', sans-serif;
+      }
+      #btn-achadinhos:hover {
+        background: #f5d800;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52,131,250,0.25);
+      }
+      #btn-achadinhos:active { transform: translateY(0); }
+      #btn-achadinhos .btn-icon { font-size: 1.3rem; }
+      #btn-achadinhos .btn-badge {
+        background: #3483fa;
+        color: #fff;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      /* ---- Painel de ofertas ---- */
+      #achadinhos-painel {
+        display: none;
+        margin-top: 24px;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        color: #333;
+      }
+      #achadinhos-painel.aberto { display: block; }
+
+      /* ---- Header do painel ---- */
+      .ml-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .ml-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #333;
+      }
+      .ml-header h2 span { color: #3483fa; }
+
+      /* ---- Filtros ---- */
+      .ml-filtros {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .ml-filtros select,
+      .ml-filtros input {
+        border: 1.5px solid #ddd;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 0.2s;
+        outline: none;
+        font-family: 'Inter', sans-serif;
+      }
+      .ml-filtros select:focus,
+      .ml-filtros input:focus { border-color: #3483fa; }
+      .ml-filtros button {
+        background: #3483fa;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-family: 'Inter', sans-serif;
+      }
+      .ml-filtros button:hover { background: #1a5fb5; }
+
+      /* ---- Grid de produtos ---- */
+      .ml-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 18px;
         margin-bottom: 24px;
       }
 
-      /* ── Card ── */
-      .mv-card {
+      /* ---- Card de produto ---- */
+      .ml-card {
         background: #fff;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.10);
@@ -42,20 +166,20 @@
         border: 1.5px solid transparent;
         position: relative;
       }
-      .mv-card:hover {
+      .ml-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 28px rgba(0,0,0,0.14);
-        border-color: #ff6900;
+        border-color: #3483fa;
       }
-      .mv-card-img {
+      .ml-card-img {
         width: 100%;
         height: 180px;
         object-fit: contain;
         background: #f8f8f8;
         padding: 12px;
       }
-      .mv-card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
-      .mv-card-titulo {
+      .ml-card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+      .ml-card-titulo {
         font-size: 0.88rem;
         font-weight: 600;
         line-height: 1.35;
@@ -65,23 +189,27 @@
         overflow: hidden;
         color: #333;
       }
-      .mv-card-preco { font-size: 1.2rem; font-weight: 800; color: #333; margin-top: auto; }
-      .mv-card-original { font-size: 0.8rem; color: #999; text-decoration: line-through; }
-      .mv-card-desconto {
+      .ml-card-preco { font-size: 1.2rem; font-weight: 800; color: #333; margin-top: auto; }
+      .ml-card-original { font-size: 0.8rem; color: #999; text-decoration: line-through; }
+      .ml-card-desconto {
         display: inline-block;
-        background: #fff3e0;
-        color: #ff6900;
+        background: #e8f5e9;
+        color: #00a650;
         font-size: 0.75rem;
         font-weight: 700;
         padding: 2px 7px;
         border-radius: 5px;
       }
-      .mv-card-frete { font-size: 0.75rem; font-weight: 600; color: #00a650; }
-      .mv-badge-novo {
+      .ml-card-frete {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #00a650;
+      }
+      .ml-badge-novo {
         position: absolute;
         top: 10px;
         left: 10px;
-        background: #ff6900;
+        background: #3483fa;
         color: #fff;
         font-size: 0.65rem;
         font-weight: 700;
@@ -90,102 +218,82 @@
         letter-spacing: 0.5px;
       }
 
-      /* ── Hero da página ── */
-      .mv-hero {
-        background: linear-gradient(135deg, #b94600, #ff6900);
-        color: #fff;
-        padding: 48px 0 40px;
-        text-align: center;
-        margin-bottom: 32px;
-      }
-      .mv-hero h1 { font-size: 2.2rem; font-weight: 800; margin: 0 0 10px; }
-      .mv-hero p  { font-size: 1.05rem; opacity: 0.9; margin: 0; }
-
-      /* ── Filtros ── */
-      .mv-filtros-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 28px;
-        background: #fff;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-      }
-      .mv-filtros-wrapper label {
-        font-weight: 600;
-        font-size: 0.95rem;
-        color: #444;
-        white-space: nowrap;
-      }
-      .mv-filtros-wrapper select {
-        border: 1.5px solid #ddd;
-        border-radius: 8px;
-        padding: 8px 14px;
-        font-size: 0.9rem;
-        background: #fff;
-        cursor: pointer;
-        outline: none;
-        transition: border-color 0.2s;
-        font-family: 'Inter', sans-serif;
-        flex: 1;
-        min-width: 180px;
-      }
-      .mv-filtros-wrapper select:focus { border-color: #ff6900; }
-      .mv-total {
-        margin-left: auto;
-        font-size: 0.88rem;
-        color: #888;
-        white-space: nowrap;
-      }
-
-      /* ── Loading ── */
-      .mv-loading {
+      /* ---- Loading ---- */
+      .ml-loading {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 80px 20px;
-        gap: 16px;
+        padding: 60px 20px;
+        gap: 14px;
         color: #666;
         font-size: 0.95rem;
       }
-      .mv-spinner {
-        width: 44px;
-        height: 44px;
+      .ml-spinner {
+        width: 40px;
+        height: 40px;
         border: 4px solid #eee;
-        border-top-color: #ff6900;
+        border-top-color: #3483fa;
         border-radius: 50%;
-        animation: mv-spin 0.8s linear infinite;
+        animation: ml-spin 0.8s linear infinite;
       }
-      @keyframes mv-spin { to { transform: rotate(360deg); } }
+      @keyframes ml-spin { to { transform: rotate(360deg); } }
 
-      /* ── Erro ── */
-      .mv-erro {
+      /* ---- Erro ---- */
+      .ml-erro {
         text-align: center;
-        padding: 60px 20px;
+        padding: 40px 20px;
         color: #c0392b;
         background: #fdf0ef;
         border-radius: 12px;
         font-size: 0.95rem;
       }
 
-      /* ── Responsivo ── */
+      /* ---- Paginação ---- */
+      .ml-paginacao {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .ml-paginacao button {
+        border: 1.5px solid #ddd;
+        background: #fff;
+        color: #3483fa;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+      }
+      .ml-paginacao button:hover:not(:disabled) {
+        background: #3483fa;
+        color: #fff;
+        border-color: #3483fa;
+      }
+      .ml-paginacao button:disabled { opacity: 0.4; cursor: default; }
+      .ml-paginacao span { font-size: 0.88rem; color: #666; }
+
+      /* ---- Responsivo ---- */
       @media (max-width: 600px) {
-        .mv-hero h1 { font-size: 1.6rem; }
-        .mv-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .mv-card-img { height: 130px; }
-        .mv-filtros-wrapper { flex-direction: column; align-items: stretch; }
-        .mv-total { margin-left: 0; }
+        #secao-achadinhos { padding: 16px; }
+        .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .ml-card-img { height: 130px; }
+        .ml-header { flex-direction: column; align-items: flex-start; }
+        .ml-filtros { width: 100%; }
+        .ml-filtros input { width: 100% !important; }
+        .ml-filtros select { width: 100%; }
       }
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
-
-    <!-- ── Header (igual ao index) ── -->
+    
     <header>
         <div class="container header-content">
             <div class="logo">
@@ -194,17 +302,17 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.html">Início</a></li>
+                  <li><a href="#">Início</a></li>
                     <li>
-                        <a href="index.html#secao-achadinhos" class="nav-link-destaque">
-                            <i class="fas fa-bolt"></i> Achadinhos
-                        </a>
-                    </li>
-                    <li>
-                        <a href="mais-vendidos.html" class="nav-link-destaque" style="color: #ff6900;">
-                            <i class="fas fa-fire"></i> Mais Vendidos
-                        </a>
-                    </li>
+                     <a href="#secao-achadinhos" id="nav-achadinhos" class="nav-link-destaque" onclick="setTimeout(()=>abrirAchadinhos(),400)">
+                        <i class="fas fa-bolt"></i> Achadinhos
+                     </a>
+                  </li>
+                  <li>
+                     <a href="mais-vendidos.html" class="nav-link-destaque">
+                        <i class="fas fa-fire"></i> Mais Vendidos
+                     </a>
+                  </li>
                     <li>
                         <a href="https://wa.me/558532344277?text=Olá,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp">
                             <i class="fab fa-whatsapp"></i> Contato
@@ -215,132 +323,263 @@
         </div>
     </header>
 
-    <!-- ── Hero ── -->
-    <div class="mv-hero">
-        <h1>🏆 Mais Vendidos</h1>
-        <p>Os produtos campeões de vendas no Mercado Livre — atualizados em tempo real</p>
-    </div>
+    <section class="carousel">
+        <div class="carousel-inner">
+            <div class="slide active" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
+                <div class="slide-content">
+                    <h1>As melhores ofertas do dia</h1>
+                    <p>Economize mais, compre melhor no Mercado NEB.</p>
+                </div>
+            </div>
+            <div class="slide" style="background: linear-gradient(135deg, #059669, #10b981);">
+                <div class="slide-content">
+                    <h1>Apoie nosso projeto</h1>
+                    <p style="font-size: 1.5rem; font-weight: 600;">Comprando pelo link você auxilia o núcleo</p>
+                </div>
+            </div>
+            <div class="slide" style="background: linear-gradient(135deg, #7c3aed, #a78bfa);">
+                <div class="slide-content">
+                    <h1>Promoções em Tecnologia</h1>
+                    <p>Eletrônicos e acessórios com preços imbatíveis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- ── Conteúdo principal ── -->
-    <main class="container">
-
-        <!-- Filtro de categoria -->
-        <div class="mv-filtros-wrapper">
-            <label><i class="fas fa-tag"></i> Categoria:</label>
-            <select id="mv-categoria" onchange="carregarMaisVendidos()">
-                <option value="MLB1000" selected>🏷️ Todas as categorias</option>
-                <option value="MLB1648">📱 Eletrônicos</option>
-                <option value="MLB1499">👗 Moda</option>
-                <option value="MLB1574">🏠 Casa e Decoração</option>
-                <option value="MLB1246">⚽ Esportes</option>
-                <option value="MLB1144">🎮 Video Games</option>
-                <option value="MLB1459">🌿 Beleza e Cuidados</option>
-                <option value="MLB1132">🛠️ Ferramentas</option>
-                <option value="MLB1071">🚗 Carros e Motos</option>
-                <option value="MLB1367">📚 Livros</option>
-            </select>
-            <span class="mv-total" id="mv-total"></span>
+    <section class="search-section container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Pesquisar ofertas (ex: Camisa, Alexa...)" onkeyup="filterOffers()">
         </div>
 
-        <!-- Grid de produtos -->
-        <div id="mv-conteudo"></div>
+        <div class="price-filter-wrapper">
+            <button id="togglePriceFilter" class="btn-filter-toggle">
+                <i class="fas fa-filter"></i> Filtrar Preço
+            </button>
+            <div id="priceFilterPanel" class="price-panel hidden">
+                <p>Máximo: <strong>R$ <span id="priceValue">---</span></strong></p>
+                <input type="range" id="priceRange" min="0" step="10">
+            </div>
+        </div>
+
+        <div class="filter-wrapper">
+            <button class="filter-btn active" data-categoria="todos">Todos</button>
+            <button class="filter-btn btn-fav-filter" id="btn-filtrar-favoritos">
+                <i class="fas fa-heart"></i> Favoritos
+            </button>
+            <button class="filter-btn" data-categoria="eletronicos">Eletrônicos</button>
+            <button class="filter-btn" data-categoria="casa">Casa</button>
+            <button class="filter-btn" data-categoria="saude">Saúde</button>
+            <button class="filter-btn" data-categoria="beleza">Beleza</button>
+            <button class="filter-btn" data-categoria="moda">Moda</button>
+            <button class="filter-btn" data-categoria="livros">Livros</button>
+            <button class="filter-btn" data-categoria="fitness">Fitness</button>
+            <button class="filter-btn" data-categoria="escritorio">Escritório</button>
+        </div>
+    </section>
+
+    <main class="container">
+
+        <!-- ======= SEÇÃO ACHADINHOS MERCADO LIVRE ======= -->
+        <section id="secao-achadinhos">
+
+          <div class="achadinhos-intro">
+            <button id="btn-achadinhos" onclick="toggleAchadinhos()">
+              <span class="btn-icon">🛍️</span>
+              Achadinhos do ML
+              <span class="btn-badge">AO VIVO</span>
+            </button>
+            <p>Ofertas em tempo real direto do Mercado Livre — clique para ver!</p>
+          </div>
+
+          <div id="achadinhos-painel">
+            <div class="ml-header">
+              <h2>🔥 <span>Achadinhos</span> do Dia</h2>
+              <div class="ml-filtros">
+                <input type="text" id="ml-busca" placeholder="Buscar produto..." style="width:160px"
+                  onkeydown="if(event.key==='Enter') buscarML()" />
+                <select id="ml-categoria" onchange="buscarML()">
+                  <option value="MLB1000" selected>🏷️ Todas as categorias</option>
+                  <option value="MLB1648">📱 Eletrônicos</option>
+                  <option value="MLB1499">👗 Moda</option>
+                  <option value="MLB1574">🏠 Casa e Decoração</option>
+                  <option value="MLB1246">⚽ Esportes</option>
+                  <option value="MLB1144">🎮 Video Games</option>
+                  <option value="MLB1459">🌿 Beleza e Cuidados</option>
+                  <option value="MLB1132">🛠️ Ferramentas</option>
+                  <option value="MLB1071">🚗 Carros e Motos</option>
+                  <option value="MLB1367">📚 Livros</option>
+                </select>
+                <button onclick="buscarML()">🔍 Buscar</button>
+              </div>
+            </div>
+            <div id="ml-conteudo"></div>
+            <div class="ml-paginacao" id="ml-paginacao" style="display:none">
+              <button id="ml-btn-anterior" onclick="paginaML(-1)">← Anterior</button>
+              <span id="ml-info-pagina"></span>
+              <button id="ml-btn-proximo" onclick="paginaML(1)">Próximo →</button>
+            </div>
+          </div>
+        </section>
+        <!-- ======= FIM ACHADINHOS ======= -->
+
+        <!-- Grid original de produtos do site -->
+        <div id="ofertas">
+            <div class="grid-offers" id="offersGrid"></div>
+        </div>
 
     </main>
 
-    <!-- ── Footer (igual ao index) ── -->
     <footer>
         <div class="container">
             <p>&copy; 2026 Mercado NEB - Todos os direitos reservados.</p>
             <small>Ao comprar através de nossos links, podemos receber uma comissão sem custo adicional para você.</small>
-            <p style="font-weight:800; margin-top:10px; color:var(--primary);">Compre com moderação. 🛒</p>
+            <p style="font-weight: 800; margin-top: 10px; color: var(--primary);">Compre com moderação. 🛒</p>
         </div>
     </footer>
 
-    <!-- ── Script ── -->
+    <!-- Script original do site (não alterado) -->
+    <script type="module" src="script.js"></script>
+
+    <!-- ======= SCRIPT ACHADINHOS MERCADO LIVRE ======= -->
     <script>
     (function() {
-      const API_URL = "/.netlify/functions/mercadolivre";
-      let carregando = false;
+      const CONFIG = {
+        API_URL: "/.netlify/functions/mercadolivre",
+        LIMITE: 20,
+      };
 
-      // Carrega automaticamente ao abrir a página
-      window.addEventListener("DOMContentLoaded", carregarMaisVendidos);
+      let estado = {
+        aberto: false,
+        pagina: 0,
+        total: 0,
+        carregando: false,
+      };
 
-      window.carregarMaisVendidos = async function() {
-        if (carregando) return;
-        carregando = true;
+      // Abre direto (chamado pelo link do nav)
+      window.abrirAchadinhos = function() {
+        if (!estado.aberto) toggleAchadinhos();
+      };
 
-        const conteudo  = document.getElementById("mv-conteudo");
-        const totalEl   = document.getElementById("mv-total");
-        const categoria = document.getElementById("mv-categoria").value;
+      window.toggleAchadinhos = function() {
+        estado.aberto = !estado.aberto;
+        const painel = document.getElementById("achadinhos-painel");
+        const btn = document.getElementById("btn-achadinhos");
+        painel.classList.toggle("aberto", estado.aberto);
+        btn.querySelector('.btn-badge').textContent = estado.aberto ? "FECHAR" : "AO VIVO";
 
-        conteudo.innerHTML = `<div class="mv-loading"><div class="mv-spinner"></div>Carregando mais vendidos...</div>`;
-        totalEl.textContent = "";
+        if (estado.aberto && estado.total === 0) {
+          buscarML();
+        }
+      };
+
+      window.buscarML = async function() {
+        if (estado.carregando) return;
+        estado.pagina = 0;
+        await fetchML();
+      };
+
+      window.paginaML = async function(direcao) {
+        const novaPagina = estado.pagina + direcao;
+        const maxPagina = Math.ceil(estado.total / CONFIG.LIMITE) - 1;
+        if (novaPagina < 0 || novaPagina > maxPagina) return;
+        estado.pagina = novaPagina;
+        await fetchML();
+        document.getElementById("secao-achadinhos").scrollIntoView({ behavior: "smooth" });
+      };
+
+      async function fetchML() {
+        if (estado.carregando) return;
+        estado.carregando = true;
+
+        const conteudo = document.getElementById("ml-conteudo");
+        const paginacao = document.getElementById("ml-paginacao");
+        conteudo.innerHTML = renderLoading();
+        paginacao.style.display = "none";
+
+        const busca = document.getElementById("ml-busca").value.trim();
+        const categoria = document.getElementById("ml-categoria").value;
+        const offset = estado.pagina * CONFIG.LIMITE;
+
+        const params = new URLSearchParams({
+          limite: CONFIG.LIMITE,
+          offset,
+          ...(busca ? { q: busca } : { categoria }),
+        });
 
         try {
-          const params = new URLSearchParams({ categoria, modo: "mais_vendidos", limite: 20 });
-          const res  = await fetch(`${API_URL}?${params}`);
+          const res = await fetch(`${CONFIG.API_URL}?${params}`);
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
           if (data.error) throw new Error(data.error);
 
-          carregando = false;
+          estado.total = data.total;
+          estado.carregando = false;
 
           if (!data.items || data.items.length === 0) {
-            conteudo.innerHTML = `<div class="mv-erro">😕 Nenhum produto encontrado para esta categoria.</div>`;
+            conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado. Tente outra busca.</div>`;
             return;
           }
 
-          totalEl.textContent = `${data.items.length} produtos`;
-          conteudo.innerHTML = `<div class="mv-grid">${data.items.map(renderCard).join("")}</div>`;
-
-          // Registra visualização no GA
-          if (typeof gtag === "function") {
-            gtag("event", "view_mais_vendidos", { categoria });
-          }
+          conteudo.innerHTML = renderGrid(data.items);
+          renderPaginacao();
 
         } catch (err) {
-          carregando = false;
+          estado.carregando = false;
           conteudo.innerHTML = `
-            <div class="mv-erro">
-              ⚠️ Não foi possível carregar os produtos.<br>
+            <div class="ml-erro">
+              ⚠️ Não foi possível carregar as ofertas.<br>
               <small>${err.message}</small><br><br>
-              <button onclick="carregarMaisVendidos()" style="
-                background:#ff6900; color:#fff; border:none;
-                padding:10px 24px; border-radius:8px; cursor:pointer;
-                font-size:0.9rem; font-weight:600; margin-top:8px;
+              <button onclick="buscarML()" style="
+                background:#c0392b;color:#fff;border:none;
+                padding:8px 18px;border-radius:8px;cursor:pointer;font-size:0.9rem;
               ">Tentar novamente</button>
             </div>`;
         }
-      };
+      }
+
+      function renderGrid(items) {
+        return `<div class="ml-grid">${items.map(renderCard).join("")}</div>`;
+      }
 
       function renderCard(item) {
-        const preco        = item.preco?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        const preco = item.preco?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
         const precOriginal = item.preco_original?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
         return `
-          <a class="mv-card" href="${item.link}" target="_blank" rel="noopener noreferrer"
-            onclick="registrarClique('${item.titulo.replace(/'/g,"\\'")}')">
-            ${item.condicao === "Novo" ? '<span class="mv-badge-novo">NOVO</span>' : ""}
-            <img class="mv-card-img" src="${item.imagem}" alt="${item.titulo}" loading="lazy"
+          <a class="ml-card" href="${item.link}" target="_blank" rel="noopener noreferrer">
+            ${item.condicao === "Novo" ? '<span class="ml-badge-novo">NOVO</span>' : ""}
+            <img class="ml-card-img" src="${item.imagem}" alt="${item.titulo}" loading="lazy"
               onerror="this.style.display='none'" />
-            <div class="mv-card-body">
-              <div class="mv-card-titulo">${item.titulo}</div>
-              ${item.preco_original ? `<div class="mv-card-original">${precOriginal}</div>` : ""}
-              <div class="mv-card-preco">${preco}</div>
-              ${item.desconto ? `<span class="mv-card-desconto">-${item.desconto}% OFF</span>` : ""}
-              ${item.frete_gratis ? `<div class="mv-card-frete">✅ Frete grátis</div>` : ""}
+            <div class="ml-card-body">
+              <div class="ml-card-titulo">${item.titulo}</div>
+              ${item.preco_original ? `<div class="ml-card-original">${precOriginal}</div>` : ""}
+              <div class="ml-card-preco">${preco}</div>
+              ${item.desconto ? `<span class="ml-card-desconto">-${item.desconto}% OFF</span>` : ""}
+              ${item.frete_gratis ? `<div class="ml-card-frete">✅ Frete grátis</div>` : ""}
             </div>
-          </a>`;
+          </a>
+        `;
       }
 
-      window.registrarClique = function(produto) {
-        if (typeof gtag === "function") {
-          gtag("event", "clique_mais_vendidos", { event_label: produto });
-        }
-      };
+      function renderPaginacao() {
+        const totalPaginas = Math.ceil(estado.total / CONFIG.LIMITE);
+        if (totalPaginas <= 1) return;
+
+        const paginacao = document.getElementById("ml-paginacao");
+        document.getElementById("ml-info-pagina").textContent = `Página ${estado.pagina + 1} de ${totalPaginas}`;
+        document.getElementById("ml-btn-anterior").disabled = estado.pagina === 0;
+        document.getElementById("ml-btn-proximo").disabled = estado.pagina >= totalPaginas - 1;
+        paginacao.style.display = "flex";
+      }
+
+      function renderLoading() {
+        return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
+      }
 
     })();
     </script>
+
 
 </body>
 </html>
