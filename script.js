@@ -381,24 +381,3 @@ function renderLoading() {
     return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
 }
 
-function buscarML() {
-  let valor = document.getElementById("ml-categoria").value;
-
-  let categorias = [];
-
-  if (valor === "todas") {
-    categorias = [
-      "MLB1051","MLB1000","MLB1648","MLB5726",
-      "MLB1574","MLB1430","MLB1276","MLB1144",
-      "MLB1132","MLB263532","MLB1196"
-    ];
-  } else {
-    categorias = [valor];
-  }
-
-  categorias.forEach(cat => {
-    fetch(`https://api.mercadolibre.com/sites/MLB/search?category=${cat}&limit=5`)
-      .then(res => res.json())
-      .then(data => console.log(data.results));
-  });
-}
