@@ -121,6 +121,12 @@
               <div class="ml-filtros">
                 <input type="text" id="ml-busca" placeholder="Buscar produto..." style="width:160px"
                   onkeydown="if(event.key==='Enter') buscarML()" />
+                
+                <select id="ml-modo" onchange="buscarML()">
+                  <option value="achadinhos" selected>🔥 Destaques</option>
+                  <option value="mais_vendidos">🏆 Mais Vendidos</option>
+                </select>
+
                 <select id="ml-categoria" onchange="buscarML()">
                   <option value="MLB1000" selected>📱 Eletrônicos</option>
                   <option value="MLB1648">💻 Informática</option>

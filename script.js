@@ -303,11 +303,13 @@ async function fetchML() {
 
     const busca = document.getElementById("ml-busca").value.trim();
     const categoria = document.getElementById("ml-categoria").value;
+    const modo = document.getElementById("ml-modo").value; // Captura o modo selecionado
     const offset = estado.pagina * CONFIG.LIMITE;
 
     const params = new URLSearchParams({
         limite: CONFIG.LIMITE,
         offset,
+        modo, // Envia o modo para a function do Netlify
         ...(busca ? { q: busca } : { categoria }),
     });
 
