@@ -1,73 +1,98 @@
 // netlify/functions/mercadolivre.js
-// Instale: não precisa de dependências extras, usa fetch nativo do Node 18+
+// Versão com diagnóstico + fallback para busca pública (sem token obrigatório)
 
 exports.handler = async (event, context) => {
   const headers = {
-    "Access-Control-Allow-Origin": "*", // troque pelo seu domínio em produção
+    "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Allow-Methods": "GET, OPTIONS",
     "Content-Type": "application/json",
   };
 
-  // Preflight CORS
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers, body: "" };
   }
 
+  const params = event.queryStringParameters || {};
+  const categoria = params.categoria || "MLB1648";
+  const limite = Math.min(parseInt(params.limite) || 20, 50);
+  const offset = parseInt(params.offset) || 0;
+  const busca = params.q || "";
+
+  // ─── Monta a URL de busca ────────────────────────────────────────
+  let searchUrl;
+  if (busca) {
+    searchUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(busca)}&sort=best_match&limit=${limite}&offset=${offset}`;
+  } else {
+    searchUrl = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&sort=best_match&limit=${limite}&offset=${offset}`;
+  }
+
+  // ─── Tenta com token primeiro (se credenciais existirem) ─────────
   const CLIENT_ID = process.env.ML_CLIENT_ID;
   const CLIENT_SECRET = process.env.ML_CLIENT_SECRET;
 
-  if (!CLIENT_ID || !CLIENT_SECRET) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: "Credenciais não configuradas nas variáveis de ambiente." }),
-    };
+  let authHeader = {};
+  let tokenInfo = "sem_credenciais";
+
+  if (CLIENT_ID && CLIENT_SECRET) {
+    try {
+      const tokenRes = await fetch("https://api.mercadolibre.com/oauth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "client_credentials",
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+        }),
+      });
+
+      const tokenData = await tokenRes.json();
+
+      if (tokenRes.ok && tokenData.access_token) {
+        authHeader = { Authorization: `Bearer ${tokenData.access_token}` };
+        tokenInfo = "token_ok";
+      } else {
+        // Token falhou — continua sem token (busca pública ainda funciona)
+        tokenInfo = `token_falhou: ${JSON.stringify(tokenData)}`;
+      }
+    } catch (e) {
+      tokenInfo = `token_erro: ${e.message}`;
+    }
   }
 
+  // ─── Faz a busca (com ou sem token) ─────────────────────────────
   try {
-    // 1. Obter Access Token (App Token — sem necessidade de usuário logado)
-    const tokenRes = await fetch("https://api.mercadolibre.com/oauth/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "client_credentials",
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-      }),
-    });
+    const searchRes = await fetch(searchUrl, { headers: authHeader });
 
-    if (!tokenRes.ok) {
-      const err = await tokenRes.json();
+    if (!searchRes.ok) {
+      const errBody = await searchRes.text();
       return {
-        statusCode: 401,
+        statusCode: searchRes.status,
         headers,
-        body: JSON.stringify({ error: "Falha ao obter token", details: err }),
+        body: JSON.stringify({
+          error: `Erro na busca ML: ${searchRes.status}`,
+          url: searchUrl,
+          token_status: tokenInfo,
+          detalhes: errBody,
+        }),
       };
     }
 
-    const { access_token } = await tokenRes.json();
+    const searchData = await searchRes.json();
 
-    // 2. Buscar ofertas/promoções — categoria ou busca configurável via query param
-    const params = event.queryStringParameters || {};
-    const categoria = params.categoria || "MLB1648"; // Eletrônicos por padrão
-    const limite = Math.min(parseInt(params.limite) || 20, 50);
-    const offset = parseInt(params.offset) || 0;
-    const busca = params.q || "";
-
-    let searchUrl;
-    if (busca) {
-      searchUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(busca)}&sort=price_asc&limit=${limite}&offset=${offset}&promotions=DEAL_OF_THE_DAY`;
-    } else {
-      searchUrl = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&sort=best_match&limit=${limite}&offset=${offset}`;
+    if (!searchData.results) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          total: 0,
+          items: [],
+          debug: { token_status: tokenInfo, resposta_ml: searchData },
+        }),
+      };
     }
 
-    const searchRes = await fetch(searchUrl, {
-      headers: { Authorization: `Bearer ${access_token}` },
-    });
-
-    const searchData = await searchRes.json();
-    const items = (searchData.results || []).map((item) => ({
+    const items = searchData.results.map((item) => ({
       id: item.id,
       titulo: item.title,
       preco: item.price,
@@ -76,12 +101,14 @@ exports.handler = async (event, context) => {
         ? Math.round((1 - item.price / item.original_price) * 100)
         : null,
       moeda: item.currency_id,
-      link: item.permalink,
-      imagem: item.thumbnail?.replace("I.jpg", "O.jpg"), // imagem maior
+      link: `${item.permalink}${item.permalink.includes('?') ? '&' : '?'}matt_tool=23098063&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos`,
+      imagem: item.thumbnail
+        ? item.thumbnail.replace(/\-[A-Z]\.jpg$/, "-O.jpg")
+        : null,
       vendedor: item.seller?.nickname || "",
       condicao: item.condition === "new" ? "Novo" : "Usado",
       frete_gratis: item.shipping?.free_shipping || false,
-      disponivel: item.available_quantity > 0,
+      disponivel: (item.available_quantity || 0) > 0,
       vendidos: item.sold_quantity || 0,
     }));
 
@@ -89,15 +116,22 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        total: searchData.paging?.total || 0,
+        total: searchData.paging?.total || items.length,
         items,
+        // Remova a linha abaixo após confirmar que funciona:
+        _debug_token: tokenInfo,
       }),
     };
   } catch (err) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: "Erro interno", details: err.message }),
+      body: JSON.stringify({
+        error: "Erro interno na função",
+        details: err.message,
+        token_status: tokenInfo,
+        url: searchUrl,
+      }),
     };
   }
 };
