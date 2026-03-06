@@ -11,7 +11,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercado NEB | Mais Vendidos</title>
+    <title>Mercado NEB | As Melhores Ofertas</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>">
 
@@ -19,8 +19,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+    <!-- ======= ESTILOS DO COMPONENTE ACHADINHOS ======= -->
     <style>
-      /* ---- Seção wrapper ---- */
+      /* ---- Seção Achadinhos wrapper ---- */
       #secao-achadinhos {
         margin-bottom: 48px;
         padding: 28px;
@@ -301,14 +302,14 @@
             </div>
             <nav>
                 <ul>
-                  <li><a href="index.html">Início</a></li>
+                  <li><a href="#">Início</a></li>
                     <li>
-                     <a href="index.html#secao-achadinhos" class="nav-link-destaque">
+                     <a href="#secao-achadinhos" id="nav-achadinhos" class="nav-link-destaque" onclick="setTimeout(()=>abrirAchadinhos(),400)">
                         <i class="fas fa-bolt"></i> Achadinhos
                      </a>
                   </li>
                   <li>
-                     <a href="#secao-achadinhos" id="nav-achadinhos" class="nav-link-destaque" onclick="setTimeout(()=>abrirAchadinhos(),400)">
+                     <a href="mais-vendidos.html" class="nav-link-destaque">
                         <i class="fas fa-fire"></i> Mais Vendidos
                      </a>
                   </li>
@@ -379,20 +380,21 @@
 
     <main class="container">
 
+        <!-- ======= SEÇÃO ACHADINHOS MERCADO LIVRE ======= -->
         <section id="secao-achadinhos">
 
           <div class="achadinhos-intro">
             <button id="btn-achadinhos" onclick="toggleAchadinhos()">
-              <span class="btn-icon">🔥</span>
-              Mais Vendidos do ML
+              <span class="btn-icon">🛍️</span>
+              Achadinhos do ML
               <span class="btn-badge">AO VIVO</span>
             </button>
-            <p>Os produtos campeões de vendas em tempo real direto do Mercado Livre — clique para ver!</p>
+            <p>Ofertas em tempo real direto do Mercado Livre — clique para ver!</p>
           </div>
 
           <div id="achadinhos-painel">
             <div class="ml-header">
-              <h2>🔥 <span>Mais Vendidos</span> do Dia</h2>
+              <h2>🔥 <span>Achadinhos</span> do Dia</h2>
               <div class="ml-filtros">
                 <input type="text" id="ml-busca" placeholder="Buscar produto..." style="width:160px"
                   onkeydown="if(event.key==='Enter') buscarML()" />
@@ -419,6 +421,9 @@
             </div>
           </div>
         </section>
+        <!-- ======= FIM ACHADINHOS ======= -->
+
+        <!-- Grid original de produtos do site -->
         <div id="ofertas">
             <div class="grid-offers" id="offersGrid"></div>
         </div>
@@ -433,8 +438,10 @@
         </div>
     </footer>
 
+    <!-- Script original do site (não alterado) -->
     <script type="module" src="script.js"></script>
 
+    <!-- ======= SCRIPT ACHADINHOS MERCADO LIVRE ======= -->
     <script>
     (function() {
       const CONFIG = {
@@ -494,11 +501,9 @@
         const categoria = document.getElementById("ml-categoria").value;
         const offset = estado.pagina * CONFIG.LIMITE;
 
-        // CORREÇÃO APLICADA: Enviando o modo "mais_vendidos" para a API
         const params = new URLSearchParams({
           limite: CONFIG.LIMITE,
-          offset: offset,
-          modo: "mais_vendidos",
+          offset,
           ...(busca ? { q: busca } : { categoria }),
         });
 
@@ -512,7 +517,7 @@
           estado.carregando = false;
 
           if (!data.items || data.items.length === 0) {
-            conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado. Tente outra busca ou categoria.</div>`;
+            conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado. Tente outra busca.</div>`;
             return;
           }
 
@@ -569,11 +574,12 @@
       }
 
       function renderLoading() {
-        return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando os mais vendidos do Mercado Livre...</div>`;
+        return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
       }
 
     })();
     </script>
+
 
 </body>
 </html>
