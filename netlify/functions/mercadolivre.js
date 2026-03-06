@@ -63,7 +63,7 @@ exports.handler = async (event, context) => {
   };
 
   const params    = event.queryStringParameters || {};
-  const categoria = params.categoria || "MLB1648";
+  const categoria = params.categoria || "MLB1000";
   const limite    = Math.min(parseInt(params.limite) || 20, 50);
 
   try {
