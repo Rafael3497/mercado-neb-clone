@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QTCN9HXRNL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-QTCN9HXRNL');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achadinhos ao Vivo | Mercado NEB</title>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* ── HERO DA PÁGINA ── */
+        .achadinhos-hero {
+            background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+            padding: 48px 0 36px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achadinhos-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(251,191,36,0.18) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .achadinhos-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 10px;
+            line-height: 1.15;
+            position: relative;
+        }
+
+        .achadinhos-hero h1 span {
+            color: #fbbf24;
+        }
+
+        .achadinhos-hero p {
+            color: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 30px;
+            margin-bottom: 16px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            backdrop-filter: blur(6px);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+            box-shadow: 0 0 0 0 rgba(74,222,128,0.7);
+        }
+
+        @keyframes pulse-dot {
+            0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.7); }
+            70% { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+            100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+        }
+
+        /* ── BARRA DE FILTROS DE CATEGORIA ── */
+        .categoria-bar {
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 65px;
+            z-index: 90;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .categoria-bar .container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 0 20px;
+        }
+
+        .categoria-bar .container::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 14px 18px;
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: all 0.25s ease;
+        }
+
+        .cat-btn:hover {
+            color: #1d4ed8;
+            background: #f8fafc;
+        }
+
+        .cat-btn.active {
+            color: #1d4ed8;
+            border-bottom-color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .cat-btn .cat-emoji {
+            font-size: 1rem;
+        }
+
+        /* ── VITRINE PRINCIPAL ── */
+        .vitrine-section {
+            padding: 32px 0 60px;
+        }
+
+        .vitrine-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .vitrine-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .vitrine-title span {
+            color: #3483fa;
+        }
+
+        .vitrine-count {
+            font-size: 0.82rem;
+            color: #64748b;
+            font-weight: 600;
+            background: #f1f5f9;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        /* ── GRID ML (reaproveitado + melhorado) ── */
+        .ml-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ml-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            border: 1.5px solid transparent;
+            position: relative;
+        }
+
+        .ml-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.13);
+            border-color: #3483fa;
+        }
+
+        .ml-card-img {
+            width: 100%;
+            height: 185px;
+            object-fit: contain;
+            background: #f8f9fb;
+            padding: 14px;
+        }
+
+        .ml-card-body {
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .ml-card-titulo {
+            font-size: 0.87rem;
+            font-weight: 600;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: #1e293b;
+        }
+
+        .ml-card-preco {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: auto;
+        }
+
+        .ml-card-original {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .ml-card-desconto {
+            display: inline-block;
+            background: #dcfce7;
+            color: #16a34a;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
+        .ml-card-frete {
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: #16a34a;
+        }
+
+        .ml-badge-novo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #3483fa;
+            color: #fff;
+            font-size: 0.63rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ── LOADING / ERRO ── */
+        .ml-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 20px;
+            gap: 16px;
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .ml-spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #3483fa;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .ml-erro {
+            text-align: center;
+            padding: 50px 20px;
+            color: #dc2626;
+            background: #fef2f2;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            border: 1px solid #fecaca;
+        }
+
+        /* ── PAGINAÇÃO ── */
+        .ml-paginacao {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .ml-paginacao button {
+            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            color: #3483fa;
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .ml-paginacao button:hover:not(:disabled) {
+            background: #3483fa;
+            color: #fff;
+            border-color: #3483fa;
+            transform: scale(1.03);
+        }
+
+        .ml-paginacao button:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+
+        .ml-paginacao span {
+            font-size: 0.88rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* ── BACK LINK ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .back-link:hover { opacity: 1; }
+
+        /* ── RESPONSIVO ── */
+        @media (max-width: 600px) {
+            .achadinhos-hero h1 { font-size: 1.7rem; }
+            .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .ml-card-img { height: 135px; }
+            .vitrine-header { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 380px) {
+            .cat-btn { padding: 12px 12px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER (igual ao index) -->
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo" style="text-decoration:none;">
+                <i class="fas fa-shopping-basket"></i>
+                <span>Mercado NEB</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li>
+                        <a href="achadinhos.html" class="nav-link-destaque" style="background:#fbbf24;">
+                            <i class="fas fa-bolt"></i> Achadinhos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://wa.me/558532344277?text=Olá,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Contato
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="achadinhos-hero">
+        <div class="container">
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Voltar ao início
+            </a>
+            <div class="live-badge">
+                <span class="live-dot"></span>
+                Ao Vivo
+            </div>
+            <h1>⚡ <span>Achadinhos</span> do Dia</h1>
+            <p>Ofertas em tempo real direto do Mercado Livre — atualizadas agora para você.</p>
+        </div>
+    </section>
+
+    <!-- BARRA DE CATEGORIAS -->
+    <nav class="categoria-bar">
+        <div class="container">
+            <button class="cat-btn active" data-cat="MLB1051" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">📱</span> Celulares
+            </button>
+            <button class="cat-btn" data-cat="MLB1000" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">📻</span> Eletrônicos
+            </button>
+            <button class="cat-btn" data-cat="MLB1648" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">💻</span> Informática
+            </button>
+            <button class="cat-btn" data-cat="MLB5726" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">🔌</span> Eletrodomésticos
+            </button>
+            <button class="cat-btn" data-cat="MLB1574" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">🏠</span> Casa
+            </button>
+            <button class="cat-btn" data-cat="MLB1430" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">👗</span> Moda
+            </button>
+            <button class="cat-btn" data-cat="MLB1276" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">⚽</span> Esportes
+            </button>
+            <button class="cat-btn" data-cat="MLB1144" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">🎮</span> Video Games
+            </button>
+            <button class="cat-btn" data-cat="MLB1132" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">🧸</span> Brinquedos
+            </button>
+            <button class="cat-btn" data-cat="MLB263532" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">🛠️</span> Ferramentas
+            </button>
+            <button class="cat-btn" data-cat="MLB1196" onclick="selecionarCategoria(this)">
+                <span class="cat-emoji">📚</span> Livros
+            </button>
+        </div>
+    </nav>
+
+    <!-- VITRINE -->
+    <main class="vitrine-section container">
+        <div class="vitrine-header">
+            <h2 class="vitrine-title">Ofertas em <span id="nome-categoria-ativa">Celulares e Smartphones</span></h2>
+            <span class="vitrine-count" id="vitrine-count" style="display:none;"></span>
+        </div>
+
+        <div id="ml-conteudo">
+            <!-- produtos carregados via JS -->
+        </div>
+
+        <div class="ml-paginacao" id="ml-paginacao" style="display:none;">
+            <button id="ml-btn-anterior" onclick="paginaML(-1)">← Anterior</button>
+            <span id="ml-info-pagina"></span>
+            <button id="ml-btn-proximo" onclick="paginaML(1)">Próximo →</button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Mercado NEB - Todos os direitos reservados.</p>
+            <small>Ao comprar através de nossos links, podemos receber uma comissão sem custo adicional para você.</small>
+            <p style="font-weight: 800; margin-top: 10px; color: var(--primary);">Compre com moderação. 🛒</p>
+        </div>
+    </footer>
+
+    <script>
+        const CONFIG = {
+            API_URL: "/.netlify/functions/mercadolivre",
+            LIMITE: 20,
+        };
+
+        // Mapeamento de ID → nome legível
+        const NOMES_CATEGORIA = {
+            "MLB1051":   "Celulares e Smartphones",
+            "MLB1000":   "Eletrônicos e Áudio",
+            "MLB1648":   "Informática",
+            "MLB5726":   "Eletrodomésticos",
+            "MLB1574":   "Casa e Decoração",
+            "MLB1430":   "Moda e Calçados",
+            "MLB1276":   "Esportes e Fitness",
+            "MLB1144":   "Video Games",
+            "MLB1132":   "Brinquedos e Hobbies",
+            "MLB263532": "Ferramentas",
+            "MLB1196":   "Livros",
+        };
+
+        let estado = {
+            pagina: 0,
+            total: 0,
+            carregando: false,
+            categoriaAtual: "MLB1051",
+        };
+
+        function selecionarCategoria(btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            estado.categoriaAtual = btn.dataset.cat;
+            estado.pagina = 0;
+            document.getElementById('nome-categoria-ativa').textContent = NOMES_CATEGORIA[estado.categoriaAtual] || "Produtos";
+            fetchML();
+        }
+
+        window.paginaML = function(direcao) {
+            const nova = estado.pagina + direcao;
+            const max  = Math.ceil(estado.total / CONFIG.LIMITE) - 1;
+            if (nova < 0 || nova > max) return;
+            estado.pagina = nova;
+            fetchML();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        async function fetchML() {
+            if (estado.carregando) return;
+            estado.carregando = true;
+
+            const conteudo  = document.getElementById("ml-conteudo");
+            const paginacao = document.getElementById("ml-paginacao");
+            const countEl   = document.getElementById("vitrine-count");
+
+            conteudo.innerHTML  = renderLoading();
+            paginacao.style.display = "none";
+            countEl.style.display   = "none";
+
+            const offset = estado.pagina * CONFIG.LIMITE;
+            const params = new URLSearchParams({
+                limite:    CONFIG.LIMITE,
+                offset,
+                categoria: estado.categoriaAtual,
+            });
+
+            try {
+                const res  = await fetch(`${CONFIG.API_URL}?${params}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                estado.total       = data.total;
+                estado.carregando  = false;
+
+                if (!data.items || data.items.length === 0) {
+                    conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado nesta categoria. Tente outra.</div>`;
+                    return;
+                }
+
+                conteudo.innerHTML = renderGrid(data.items);
+
+                // contador
+                countEl.textContent = `${data.items.length} de ${data.total} produtos`;
+                countEl.style.display = "inline-block";
+
+                renderPaginacao();
+
+            } catch (err) {
+                estado.carregando = false;
+                conteudo.innerHTML = `
+                    <div class="ml-erro">
+                        ⚠️ Não foi possível carregar as ofertas.<br>
+                        <small>${err.message}</small><br><br>
+                        <button onclick="fetchML()" style="
+                            background:#dc2626;color:#fff;border:none;
+                            padding:9px 20px;border-radius:9px;cursor:pointer;
+                            font-size:0.9rem;font-weight:700;margin-top:4px;
+                        ">Tentar novamente</button>
+                    </div>`;
+            }
+        }
+
+        function renderGrid(items) {
+            return `<div class="ml-grid">${items.map(renderCard).join("")}</div>`;
+        }
+
+        function renderCard(item) {
+            const preco      = item.preco?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+            const precOrig   = item.preco_original?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+            return `
+                <a class="ml-card" href="${item.link}" target="_blank" rel="noopener noreferrer"
+                   onclick="gtag('event','clique_achadinho',{item_id:'${item.id}',categoria:'${estado.categoriaAtual}'})">
+                    ${item.condicao === "Novo" ? '<span class="ml-badge-novo">NOVO</span>' : ""}
+                    <img class="ml-card-img" src="${item.imagem}" alt="${item.titulo}" loading="lazy"
+                         onerror="this.style.display='none'" />
+                    <div class="ml-card-body">
+                        <div class="ml-card-titulo">${item.titulo}</div>
+                        ${item.preco_original ? `<div class="ml-card-original">${precOrig}</div>` : ""}
+                        <div class="ml-card-preco">${preco}</div>
+                        ${item.desconto ? `<span class="ml-card-desconto">-${item.desconto}% OFF</span>` : ""}
+                        ${item.frete_gratis ? `<div class="ml-card-frete">✅ Frete grátis</div>` : ""}
+                    </div>
+                </a>`;
+        }
+
+        function renderPaginacao() {
+            const total = Math.ceil(estado.total / CONFIG.LIMITE);
+            if (total <= 1) return;
+            const paginacao = document.getElementById("ml-paginacao");
+            document.getElementById("ml-info-pagina").textContent = `Página ${estado.pagina + 1} de ${total}`;
+            document.getElementById("ml-btn-anterior").disabled   = estado.pagina === 0;
+            document.getElementById("ml-btn-proximo").disabled    = estado.pagina >= total - 1;
+            paginacao.style.display = "flex";
+        }
+
+        function renderLoading() {
+            return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
+        }
+
+        // Carrega ao abrir a página
+        fetchML();
+    </script>
+
+</body>
+</html>
