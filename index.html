@@ -121,17 +121,19 @@
               <div class="ml-filtros">
                 <input type="text" id="ml-busca" placeholder="Buscar produto..." style="width:160px"
                   onkeydown="if(event.key==='Enter') buscarML()" />
+
                 <select id="ml-categoria" onchange="buscarML()">
-                  <option value="MLB1000" selected>📱 Eletrônicos</option>
+                  <option value="todas" selected>🏷️ Todas as Categorias</option>
+                  <option value="MLB1051">📱 Celulares e Smartphones</option>
+                  <option value="MLB1000">📻 Eletrônicos e Áudio</option>
                   <option value="MLB1648">💻 Informática</option>
-                  <option value="MLB1430">👗 Moda</option>
+                  <option value="MLB5726">🔌 Eletrodomésticos</option>
                   <option value="MLB1574">🏠 Casa e Decoração</option>
-                  <option value="MLB1276">⚽ Esportes</option>
+                  <option value="MLB1430">👗 Moda e Calçados</option>
+                  <option value="MLB1276">⚽ Esportes e Fitness</option>
                   <option value="MLB1144">🎮 Video Games</option>
-                  <option value="MLB1246">🌿 Beleza e Cuidados</option>
+                  <option value="MLB1132">🧸 Brinquedos e Hobbies</option>
                   <option value="MLB263532">🛠️ Ferramentas</option>
-                  <option value="MLB1743">🚗 Carros e Motos</option>
-                  <option value="MLB1132">🧸 Brinquedos</option>
                   <option value="MLB1196">📚 Livros</option>
                 </select>
                 <button onclick="buscarML()">🔍 Buscar</button>
