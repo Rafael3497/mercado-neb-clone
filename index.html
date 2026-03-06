@@ -308,6 +308,11 @@
                         <i class="fas fa-bolt"></i> Achadinhos
                      </a>
                   </li>
+                  <li>
+                     <a href="mais-vendidos.html" class="nav-link-destaque">
+                        <i class="fas fa-fire"></i> Mais Vendidos
+                     </a>
+                  </li>
                     <li>
                         <a href="https://wa.me/558532344277?text=Olá,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp">
                             <i class="fab fa-whatsapp"></i> Contato
@@ -387,19 +392,12 @@
             <p>Ofertas em tempo real direto do Mercado Livre — clique para ver!</p>
           </div>
 
-          <!-- Painel de ofertas (abre ao clicar) -->
           <div id="achadinhos-painel">
-
             <div class="ml-header">
               <h2>🔥 <span>Achadinhos</span> do Dia</h2>
               <div class="ml-filtros">
-                <input
-                  type="text"
-                  id="ml-busca"
-                  placeholder="Buscar produto..."
-                  style="width:160px"
-                  onkeydown="if(event.key==='Enter') buscarML()"
-                />
+                <input type="text" id="ml-busca" placeholder="Buscar produto..." style="width:160px"
+                  onkeydown="if(event.key==='Enter') buscarML()" />
                 <select id="ml-categoria" onchange="buscarML()">
                   <option value="MLB1000" selected>🏷️ Todas as categorias</option>
                   <option value="MLB1648">📱 Eletrônicos</option>
@@ -415,15 +413,12 @@
                 <button onclick="buscarML()">🔍 Buscar</button>
               </div>
             </div>
-
             <div id="ml-conteudo"></div>
-
             <div class="ml-paginacao" id="ml-paginacao" style="display:none">
               <button id="ml-btn-anterior" onclick="paginaML(-1)">← Anterior</button>
               <span id="ml-info-pagina"></span>
               <button id="ml-btn-proximo" onclick="paginaML(1)">Próximo →</button>
             </div>
-
           </div>
         </section>
         <!-- ======= FIM ACHADINHOS ======= -->
@@ -584,6 +579,7 @@
 
     })();
     </script>
+
 
 </body>
 </html>

@@ -1,5 +1,7 @@
 // netlify/functions/mercadolivre.js
-// Fluxo: highlights → product/items (sem precisar do /items que dá 403)
+// Suporta dois modos:
+//   modo=achadinhos  → highlights por categoria (padrão)
+//   modo=mais_vendidos → best sellers por categoria
 
 const AFILIADO_ID = "23098063";
 
@@ -65,13 +67,20 @@ exports.handler = async (event, context) => {
   const params    = event.queryStringParameters || {};
   const categoria = params.categoria || "MLB1000";
   const limite    = Math.min(parseInt(params.limite) || 20, 50);
+  const modo      = params.modo || "achadinhos"; // "achadinhos" ou "mais_vendidos"
 
   try {
-    // 2. Busca highlights da categoria
-    const highlightsRes = await fetch(
-      `https://api.mercadolibre.com/highlights/MLB/category/${categoria}`,
-      { headers: authHeaders }
-    );
+    // 2. Define a URL do highlights conforme o modo
+    // achadinhos   → tipo padrão do ML (destaques editoriais)
+    // mais_vendidos → tipo BEST_SELLER (mais vendidos)
+    let highlightsUrl;
+    if (modo === "mais_vendidos") {
+      highlightsUrl = `https://api.mercadolibre.com/highlights/MLB/category/${categoria}?highlight_type=BEST_SELLER`;
+    } else {
+      highlightsUrl = `https://api.mercadolibre.com/highlights/MLB/category/${categoria}`;
+    }
+
+    const highlightsRes = await fetch(highlightsUrl, { headers: authHeaders });
 
     if (!highlightsRes.ok) {
       const err = await highlightsRes.text();
@@ -95,11 +104,9 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // 3. Para cada product_id busca dados do item via /products/:id/items
-    // Esse endpoint NÃO dá 403 e já tem preço, frete e condição
+    // 3. Busca dados de cada produto em paralelo
     const itemPromises = productIds.map(async (productId) => {
       try {
-        // Busca dados do produto (nome, imagem)
         const [productRes, itemRes] = await Promise.all([
           fetch(`https://api.mercadolibre.com/products/${productId}`, { headers: authHeaders }),
           fetch(`https://api.mercadolibre.com/products/${productId}/items?limit=1`, { headers: authHeaders }),
@@ -115,12 +122,12 @@ exports.handler = async (event, context) => {
         const itemInfo = itemData.results?.[0];
         if (!itemInfo) return null;
 
-        // Monta permalink com item_id
         const permalink = `https://www.mercadolivre.com.br/p/${productId}`;
         const sep = permalink.includes("?") ? "&" : "?";
-        const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos`;
+        // Diferencia campanha por modo para rastreio no painel de afiliados
+        const campanha = modo === "mais_vendidos" ? "mais_vendidos" : "achadinhos";
+        const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=${campanha}`;
 
-        // Pega imagem do produto
         const imagem = productData.pictures?.[0]?.url
           || productData.pictures?.[0]?.thumbnail
           || null;
