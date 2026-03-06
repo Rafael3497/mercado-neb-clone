@@ -489,7 +489,7 @@
     <script>
         const CONFIG = {
             API_URL: "/.netlify/functions/mercadolivre",
-            LIMITE: 20,
+            LIMITE: 50,
         };
 
         // Mapeamento de ID → nome legível
@@ -557,8 +557,9 @@
                 const data = await res.json();
                 if (data.error) throw new Error(data.error);
 
-                estado.total       = data.total;
-                estado.carregando  = false;
+                // Limita a 200 produtos = 4 páginas de 50
+                estado.total      = Math.min(data.total, 200);
+                estado.carregando = false;
 
                 if (!data.items || data.items.length === 0) {
                     conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado nesta categoria. Tente outra.</div>`;
@@ -567,8 +568,10 @@
 
                 conteudo.innerHTML = renderGrid(data.items);
 
-                // contador
-                countEl.textContent = `${data.items.length} de ${data.total} produtos`;
+                // Contador: "Mostrando 1–50 de 200 produtos"
+                const inicio = estado.pagina * CONFIG.LIMITE + 1;
+                const fim    = Math.min(inicio + data.items.length - 1, estado.total);
+                countEl.textContent   = `Mostrando ${inicio}–${fim} de ${estado.total} produtos`;
                 countEl.style.display = "inline-block";
 
                 renderPaginacao();
