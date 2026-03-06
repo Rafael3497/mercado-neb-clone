@@ -63,6 +63,7 @@ exports.handler = async (event, context) => {
     const total = data.paging?.total || 0;
     
     const parsedItems = data.results.map(item => {
+      // Usa o permalink canônico para blindar a comissão contra redirecionamentos
       const permalink = item.permalink;
       const sep = permalink.includes("?") ? "&" : "?";
       const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_busca`;
@@ -100,7 +101,7 @@ exports.handler = async (event, context) => {
       items = res.items; totalItems = res.total;
     } 
     else if (categoria === "todas") {
-      // FLUXO 2: Nova opção "Todas as Categorias"
+      // FLUXO 2: Opção "Todas as Categorias"
       const url = `https://api.mercadolibre.com/sites/MLB/search?q=ofertas&limit=${limite}&offset=${offset}`;
       const res = await fetchSearch(url);
       items = res.items; totalItems = res.total;
@@ -131,9 +132,12 @@ exports.handler = async (event, context) => {
               const itemInfo = itemData.results?.[0];
               if (!itemInfo) return null;
 
-              const permalink = `https://www.mercadolivre.com.br/p/${productId}`;
+              // CORREÇÃO CRÍTICA: Extração do permalink diretamente da resposta do item
+              // Isso evita redirecionamentos 301 do ML que poderiam limpar o seu AFILIADO_ID
+              const permalink = itemInfo.permalink;
               const sep = permalink.includes("?") ? "&" : "?";
               const linkAfiliado = `${permalink}${sep}matt_tool=${AFILIADO_ID}&matt_word=&matt_source=mercadoneb&matt_campaign=achadinhos_categoria`;
+              
               const imagem = productData.pictures?.[0]?.url || productData.pictures?.[0]?.thumbnail || null;
 
               return {
@@ -156,8 +160,7 @@ exports.handler = async (event, context) => {
           items = (await Promise.all(itemPromises)).filter(Boolean);
         }
       } else {
-        // FLUXO DE SEGURANÇA (FALLBACK): Se der o erro 404
-        // O servidor desvia o tráfego para a busca por categoria nativa, evitando qualquer erro no ecrã do utilizador.
+        // FLUXO DE SEGURANÇA (FALLBACK)
         const url = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${limite}&offset=${offset}`;
         const res = await fetchSearch(url);
         items = res.items; totalItems = res.total;
