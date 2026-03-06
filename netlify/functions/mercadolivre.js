@@ -1,20 +1,7 @@
 // netlify/functions/mercadolivre.js
-// Usa endpoints públicos que não exigem certificação
+// Fluxo: highlights → product/items → item details
 
 const AFILIADO_ID = "23098063";
-
-// Categorias com seus IDs para highlights
-const CATEGORIAS = {
-  "MLB1648": "Eletrônicos",
-  "MLB1499": "Moda",
-  "MLB1574": "Casa",
-  "MLB1246": "Esportes",
-  "MLB1144": "Video Games",
-  "MLB1459": "Beleza",
-  "MLB1132": "Ferramentas",
-  "MLB1071": "Veículos",
-  "MLB1367": "Livros",
-};
 
 exports.handler = async (event, context) => {
   const headers = {
@@ -32,116 +19,140 @@ exports.handler = async (event, context) => {
   const CLIENT_SECRET = process.env.ML_CLIENT_SECRET;
   const REFRESH_TOKEN = process.env.ML_REFRESH_TOKEN;
 
-  // 1. Gera access_token via refresh_token
-  let access_token = null;
-  if (CLIENT_ID && CLIENT_SECRET && REFRESH_TOKEN) {
-    try {
-      const tokenRes = await fetch("https://api.mercadolibre.com/oauth/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          grant_type:    "refresh_token",
-          client_id:     CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-          refresh_token: REFRESH_TOKEN,
-        }),
-      });
-      const tokenData = await tokenRes.json();
-      if (tokenData.access_token) access_token = tokenData.access_token;
-    } catch (e) {}
+  if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: "Variáveis ML_CLIENT_ID, ML_CLIENT_SECRET e ML_REFRESH_TOKEN não configuradas." }),
+    };
   }
 
-  const authHeaders = access_token
-    ? { "Authorization": `Bearer ${access_token}`, "Accept": "application/json" }
-    : { "Accept": "application/json" };
+  // 1. Gera access_token via refresh_token
+  let access_token = null;
+  try {
+    const tokenRes = await fetch("https://api.mercadolibre.com/oauth/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type:    "refresh_token",
+        client_id:     CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        refresh_token: REFRESH_TOKEN,
+      }),
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) {
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ error: "Falha ao gerar token", detalhes: tokenData }),
+      };
+    }
+    access_token = tokenData.access_token;
+  } catch (e) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: "Erro ao obter token", details: e.message }),
+    };
+  }
+
+  const authHeaders = {
+    "Authorization": `Bearer ${access_token}`,
+    "Accept": "application/json",
+  };
 
   const params    = event.queryStringParameters || {};
   const categoria = params.categoria || "MLB1648";
   const limite    = Math.min(parseInt(params.limite) || 20, 50);
-  const offset    = parseInt(params.offset) || 0;
-  const busca     = params.q || "";
 
-  // 2. Tenta diferentes endpoints em ordem
-  const endpoints = [];
-
-  if (busca) {
-    // Busca por texto
-    endpoints.push(
-      `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(busca)}&limit=${limite}&offset=${offset}`,
-    );
-  } else {
-    // Highlights da categoria (produtos em destaque — não exige certificação)
-    endpoints.push(
+  try {
+    // 2. Busca highlights da categoria (produtos em destaque)
+    const highlightsRes = await fetch(
       `https://api.mercadolibre.com/highlights/MLB/category/${categoria}`,
-      `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&sort=best_match&limit=${limite}&offset=${offset}`,
+      { headers: authHeaders }
     );
-  }
 
-  let lastError = null;
+    if (!highlightsRes.ok) {
+      const err = await highlightsRes.text();
+      return {
+        statusCode: highlightsRes.status,
+        headers,
+        body: JSON.stringify({ error: `Erro highlights: ${highlightsRes.status}`, detalhes: err }),
+      };
+    }
 
-  for (const url of endpoints) {
-    try {
-      const res = await fetch(url, { headers: authHeaders });
+    const highlightsData = await highlightsRes.json();
+    const productIds = (highlightsData.content || [])
+      .slice(0, limite)
+      .map(p => p.id);
 
-      if (!res.ok) {
-        lastError = { status: res.status, url, body: await res.text() };
-        continue; // tenta o próximo endpoint
-      }
+    if (productIds.length === 0) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ total: 0, items: [] }),
+      };
+    }
 
-      const data = await res.json();
-
-      // Highlights retorna formato diferente: { content: [ {id, position}, ... ] }
-      // Precisamos buscar detalhes dos itens
-      if (data.content && Array.isArray(data.content)) {
-        const ids = data.content.slice(0, limite).map(i => i.id).join(",");
-        if (!ids) return { statusCode: 200, headers, body: JSON.stringify({ total: 0, items: [] }) };
-
-        const itemsRes = await fetch(
-          `https://api.mercadolibre.com/items?ids=${ids}&attributes=id,title,price,original_price,permalink,thumbnail,condition,shipping,available_quantity,sold_quantity,seller`,
+    // 3. Para cada product_id, busca o item_id correspondente (em paralelo)
+    const itemIdPromises = productIds.map(async (productId) => {
+      try {
+        const res = await fetch(
+          `https://api.mercadolibre.com/products/${productId}/items?limit=1`,
           { headers: authHeaders }
         );
-
-        if (!itemsRes.ok) {
-          lastError = { status: itemsRes.status, url: `items?ids=${ids}`, body: await itemsRes.text() };
-          continue;
-        }
-
-        const itemsData = await itemsRes.json();
-        const items = itemsData
-          .filter(i => i.code === 200 && i.body)
-          .map(i => formatItem(i.body));
-
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ total: items.length, items }),
-        };
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.results?.[0]?.item_id || null;
+      } catch {
+        return null;
       }
+    });
 
-      // Formato padrão de busca
-      if (data.results && data.results.length > 0) {
-        const items = data.results.map(formatItem);
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ total: data.paging?.total || items.length, items }),
-        };
-      }
+    const itemIds = (await Promise.all(itemIdPromises)).filter(Boolean);
 
-    } catch (e) {
-      lastError = { error: e.message, url };
+    if (itemIds.length === 0) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ total: 0, items: [] }),
+      };
     }
-  }
 
-  // Todos os endpoints falharam
-  return {
-    statusCode: 403,
-    headers,
-    body: JSON.stringify({
-      error: "Não foi possível carregar produtos. Verifique as configurações do app no ML Developers.",
-      ultimo_erro: lastError,
-    }),
-  };
+    // 4. Busca detalhes de todos os itens de uma vez
+    const itemsRes = await fetch(
+      `https://api.mercadolibre.com/items?ids=${itemIds.join(",")}&attributes=id,title,price,original_price,permalink,thumbnail,condition,shipping,available_quantity,sold_quantity,seller,currency_id`,
+      { headers: authHeaders }
+    );
+
+    if (!itemsRes.ok) {
+      const err = await itemsRes.text();
+      return {
+        statusCode: itemsRes.status,
+        headers,
+        body: JSON.stringify({ error: `Erro ao buscar itens: ${itemsRes.status}`, detalhes: err }),
+      };
+    }
+
+    const itemsData = await itemsRes.json();
+    const items = itemsData
+      .filter(i => i.code === 200 && i.body)
+      .map(i => formatItem(i.body));
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ total: items.length, items }),
+    };
+
+  } catch (err) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: "Erro interno", details: err.message }),
+    };
+  }
 };
 
 function formatItem(item) {
