@@ -1,4 +1,5 @@
 // netlify/functions/mercadolivre.js
+// Usa refresh_token para gerar access_token automaticamente
 
 const AFILIADO_ID = "23098063";
 
@@ -14,62 +15,74 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers, body: "" };
   }
 
-  const CLIENT_ID = process.env.ML_CLIENT_ID;
+  const CLIENT_ID     = process.env.ML_CLIENT_ID;
   const CLIENT_SECRET = process.env.ML_CLIENT_SECRET;
+  const REFRESH_TOKEN = process.env.ML_REFRESH_TOKEN;
 
-  if (!CLIENT_ID || !CLIENT_SECRET) {
+  if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: "Variáveis ML_CLIENT_ID e ML_CLIENT_SECRET não configuradas." }),
+      body: JSON.stringify({ error: "Variáveis de ambiente não configuradas: ML_CLIENT_ID, ML_CLIENT_SECRET, ML_REFRESH_TOKEN." }),
     };
   }
 
-  // 1. Gera o token
+  // 1. Gera access_token usando o refresh_token
   let access_token = null;
   try {
     const tokenRes = await fetch("https://api.mercadolibre.com/oauth/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        grant_type: "client_credentials",
-        client_id: CLIENT_ID,
+        grant_type:    "refresh_token",
+        client_id:     CLIENT_ID,
         client_secret: CLIENT_SECRET,
+        refresh_token: REFRESH_TOKEN,
       }),
     });
+
     const tokenData = await tokenRes.json();
-    if (tokenData.access_token) {
-      access_token = tokenData.access_token;
+
+    if (!tokenData.access_token) {
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ error: "Falha ao gerar token", detalhes: tokenData }),
+      };
     }
+
+    access_token = tokenData.access_token;
+
   } catch (e) {
-    // Continua sem token
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: "Erro ao obter token", details: e.message }),
+    };
   }
 
-  const params = event.queryStringParameters || {};
+  // 2. Monta URL de busca
+  const params    = event.queryStringParameters || {};
   const categoria = params.categoria || "MLB1648";
-  const limite = Math.min(parseInt(params.limite) || 20, 50);
-  const offset = parseInt(params.offset) || 0;
-  const busca = params.q || "";
+  const limite    = Math.min(parseInt(params.limite) || 20, 50);
+  const offset    = parseInt(params.offset) || 0;
+  const busca     = params.q || "";
 
-  // 2. Monta URL — usa app_id E tenta com token no header
   let searchUrl;
   if (busca) {
-    searchUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(busca)}&sort=best_match&limit=${limite}&offset=${offset}&app_id=${CLIENT_ID}`;
+    searchUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(busca)}&sort=best_match&limit=${limite}&offset=${offset}`;
   } else {
-    searchUrl = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&sort=best_match&limit=${limite}&offset=${offset}&app_id=${CLIENT_ID}`;
+    searchUrl = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&sort=best_match&limit=${limite}&offset=${offset}`;
   }
 
-  // 3. Monta headers da requisição
-  const reqHeaders = {
-    "Accept": "application/json",
-    "User-Agent": "MercadoNEB/1.0",
-  };
-  if (access_token) {
-    reqHeaders["Authorization"] = `Bearer ${access_token}`;
-  }
-
+  // 3. Faz a busca com o access_token
   try {
-    const searchRes = await fetch(searchUrl, { headers: reqHeaders });
+    const searchRes = await fetch(searchUrl, {
+      headers: {
+        "Authorization": `Bearer ${access_token}`,
+        "Accept": "application/json",
+      },
+    });
 
     if (!searchRes.ok) {
       const errBody = await searchRes.text();
@@ -77,9 +90,8 @@ exports.handler = async (event, context) => {
         statusCode: searchRes.status,
         headers,
         body: JSON.stringify({
-          error: `Erro na API: ${searchRes.status}`,
+          error: `Erro na API do Mercado Livre: ${searchRes.status}`,
           detalhes: errBody,
-          token_gerado: !!access_token,
         }),
       };
     }
@@ -102,21 +114,21 @@ exports.handler = async (event, context) => {
         : null;
 
       return {
-        id: item.id,
-        titulo: item.title,
-        preco: item.price,
+        id:            item.id,
+        titulo:        item.title,
+        preco:         item.price,
         preco_original: item.original_price || null,
-        desconto: item.original_price
+        desconto:      item.original_price
           ? Math.round((1 - item.price / item.original_price) * 100)
           : null,
-        moeda: item.currency_id,
-        link: linkAfiliado,
+        moeda:         item.currency_id,
+        link:          linkAfiliado,
         imagem,
-        vendedor: item.seller?.nickname || "",
-        condicao: item.condition === "new" ? "Novo" : "Usado",
-        frete_gratis: item.shipping?.free_shipping || false,
-        disponivel: (item.available_quantity || 0) > 0,
-        vendidos: item.sold_quantity || 0,
+        vendedor:      item.seller?.nickname || "",
+        condicao:      item.condition === "new" ? "Novo" : "Usado",
+        frete_gratis:  item.shipping?.free_shipping || false,
+        disponivel:    (item.available_quantity || 0) > 0,
+        vendidos:      item.sold_quantity || 0,
       };
     });
 
@@ -134,7 +146,7 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       headers,
       body: JSON.stringify({
-        error: "Erro interno",
+        error: "Erro interno na função",
         details: err.message,
       }),
     };
