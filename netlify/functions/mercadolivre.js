@@ -100,9 +100,11 @@ exports.handler = async (event, context) => {
   const sortQuery = SORT_MAP[ordenacao] ? `&sort=${SORT_MAP[ordenacao]}` : "";
 
   // ── 3. HELPER: fetch + parse da busca normal ──────────────────────────────
-  async function fetchSearch(url) {
-    console.log("[fetchSearch] url:", url);
-    const res = await fetch(url, { headers: authHeaders });
+  // useAuth=false para buscas públicas (/sites/MLB/search?q=...)
+  // useAuth=true  para endpoints privados (/highlights/, /products/)
+  async function fetchSearch(url, useAuth = false) {
+    console.log("[fetchSearch] url:", url, "| auth:", useAuth);
+    const res = await fetch(url, { headers: useAuth ? authHeaders : { "Accept": "application/json" } });
     const raw = await res.text();
 
     if (!res.ok) {
@@ -159,7 +161,7 @@ exports.handler = async (event, context) => {
         + sortQuery;
 
       console.log("[BUSCA] termo:", termoBusca, "| ordenacao:", ordenacao);
-      const resultado = await fetchSearch(url);
+      const resultado = await fetchSearch(url, false); // busca pública, sem token
 
       return {
         statusCode: 200,
@@ -236,7 +238,7 @@ exports.handler = async (event, context) => {
         const faltam  = limite - items.length;
         const urlComp = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${faltam}&offset=${offset}`;
         try {
-          const comp          = await fetchSearch(urlComp);
+          const comp          = await fetchSearch(urlComp, false); // busca pública
           const existentes    = new Set(items.map(i => i.id));
           const novos         = comp.items.filter(i => !existentes.has(i.id));
           items               = [...items, ...novos].slice(0, limite);
@@ -250,7 +252,7 @@ exports.handler = async (event, context) => {
       // Highlights falhou — usa busca por categoria diretamente
       console.warn("[HIGHLIGHTS] endpoint falhou, usando busca por categoria");
       const url       = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${limite}&offset=${offset}`;
-      const resultado = await fetchSearch(url);
+      const resultado = await fetchSearch(url, false); // busca pública
       items           = resultado.items;
       totalItems      = resultado.total;
     }
