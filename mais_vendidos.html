@@ -11,7 +11,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achadinhos ao Vivo | Mercado NEB</title>
+    <title>Mais Vendidos | Mercado NEB</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>">
     <link rel="stylesheet" href="style.css">
@@ -20,7 +20,7 @@
 
     <style>
         /* ── HERO DA PÁGINA ── */
-        .achadinhos-hero {
+        .mais-vendidos-hero {
             background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
             padding: 48px 0 36px;
             text-align: center;
@@ -28,7 +28,7 @@
             overflow: hidden;
         }
 
-        .achadinhos-hero::before {
+        .mais-vendidos-hero::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -38,7 +38,7 @@
             pointer-events: none;
         }
 
-        .achadinhos-hero h1 {
+        .mais-vendidos-hero h1 {
             font-size: 2.4rem;
             font-weight: 800;
             color: #fff;
@@ -47,11 +47,11 @@
             position: relative;
         }
 
-        .achadinhos-hero h1 span {
+        .mais-vendidos-hero h1 span {
             color: #fbbf24;
         }
 
-        .achadinhos-hero p {
+        .mais-vendidos-hero p {
             color: rgba(255,255,255,0.85);
             font-size: 1rem;
             position: relative;
@@ -367,7 +367,7 @@
 
         /* ── RESPONSIVO ── */
         @media (max-width: 600px) {
-            .achadinhos-hero h1 { font-size: 1.7rem; }
+            .mais-vendidos-hero h1 { font-size: 1.7rem; }
             .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .ml-card-img { height: 135px; }
             .vitrine-header { flex-direction: column; align-items: flex-start; }
@@ -391,8 +391,8 @@
                 <ul>
                     <li><a href="index.html">Início</a></li>
                     <li>
-                        <a href="achadinhos.html" class="nav-link-destaque" style="background:#fbbf24;">
-                            <i class="fas fa-bolt"></i> Achadinhos
+                        <a href="mais_vendidos.html" class="nav-link-destaque" style="background:#fbbf24;">
+                            <i class="fas fa-trophy"></i> Mais Vendidos
                         </a>
                     </li>
                     <li>
@@ -406,7 +406,7 @@
     </header>
 
     <!-- HERO -->
-    <section class="achadinhos-hero">
+    <section class="mais-vendidos-hero">
         <div class="container">
             <a href="index.html" class="back-link">
                 <i class="fas fa-arrow-left"></i> Voltar ao início
@@ -415,8 +415,8 @@
                 <span class="live-dot"></span>
                 Ao Vivo
             </div>
-            <h1>⚡ <span>Achadinhos</span> do Dia</h1>
-            <p>Ofertas em tempo real direto do Mercado Livre — atualizadas agora para você.</p>
+            <h1>🏆 <span>Mais Vendidos</span> do Dia</h1>
+            <p>Os produtos mais vendidos do Mercado Livre — atualizados agora para você.</p>
         </div>
     </section>
 
@@ -601,7 +601,7 @@
 
             return `
                 <a class="ml-card" href="${item.link}" target="_blank" rel="noopener noreferrer"
-                   onclick="gtag('event','clique_achadinho',{item_id:'${item.id}',categoria:'${estado.categoriaAtual}'})">
+                   onclick="gtag('event','clique_mais_vendido',{item_id:'${item.id}',categoria:'${estado.categoriaAtual}'})">
                     ${item.condicao === "Novo" ? '<span class="ml-badge-novo">NOVO</span>' : ""}
                     <img class="ml-card-img" src="${item.imagem}" alt="${item.titulo}" loading="lazy"
                          onerror="this.style.display='none'" />

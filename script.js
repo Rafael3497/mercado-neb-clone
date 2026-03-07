@@ -2,6 +2,13 @@
 import { meusProdutos } from './produtos.js';
 
 /* ==========================================
+   CONFIGURAÇÃO DE PAGINAÇÃO
+   ========================================== */
+const PRODUTOS_POR_PAGINA = 20;
+let paginaAtual = 1;
+let produtosFiltrados = [...meusProdutos];
+
+/* ==========================================
    SISTEMA DE FAVORITOS
    ========================================== */
 let listaFavoritosNEB = [];
@@ -47,25 +54,37 @@ window.toggleFavorito = function(event, produtoId) {
         mostrarNotificacao("Removido dos favoritos.");
     }
     localStorage.setItem('mercado_neb_favs', JSON.stringify(listaFavoritosNEB));
-    
+
     if (document.querySelector('.btn-fav-filter.active')) {
-        filtrarFavoritos(); 
+        filtrarFavoritos();
     }
 }
 
 /* ==========================================
-   CARREGAMENTO E FILTROS PROFISSIONAIS
+   PAGINAÇÃO
    ========================================== */
-function carregarProdutos() {
+function renderizarPagina(lista, pagina) {
     const grid = document.getElementById('offersGrid');
+    const paginacaoEl = document.getElementById('paginacao-produtos');
     if (!grid) return;
 
-    grid.innerHTML = meusProdutos.map(p => {
+    const totalPaginas = Math.ceil(lista.length / PRODUTOS_POR_PAGINA);
+    const inicio = (pagina - 1) * PRODUTOS_POR_PAGINA;
+    const fim = inicio + PRODUTOS_POR_PAGINA;
+    const produtosDaPagina = lista.slice(inicio, fim);
+
+    // Renderiza os cards da página atual
+    grid.innerHTML = produtosDaPagina.map(p => {
         const identificador = p.id;
         const éAmazon = p.loja === 'amazon';
+
+        // Define o texto e o ícone do botão baseado na loja
+        const textoBotao = éAmazon ? 'Comprar na Amazon' : 'Comprar no Mercado Livre';
+        const iconeBotao = éAmazon ? 'fab fa-amazon' : 'fas fa-shopping-cart';
         const lojaNome = éAmazon ? 'Amazon' : 'Mercado Livre';
+
         const isFav = verificarStatusFavorito(identificador);
-        
+
         return `
         <div class="card" id="${identificador}" data-name="${p.nome}" data-category="${p.categoria}">
             <div class="card-img">
@@ -77,32 +96,85 @@ function carregarProdutos() {
             </div>
             <div class="card-info">
                 <h3>${p.nome}</h3>
-                <p>${p.desc}</p>
+                <p>${p.desc || 'Oferta selecionada do dia!'}</p>
                 <div class="price-container">
                     <span class="price-label">R$</span>
                     <span class="price-value">${p.preco}</span>
                 </div>
                 <div class="card-actions">
-                    <a href="${p.link}" target="_blank" class="btn-buy" onclick="registrarClique('${p.nome}', '${lojaNome}')">Ver na Loja</a>
+                    <a href="${p.link}" target="_blank" class="btn-buy" onclick="registrarClique('${p.nome}', '${lojaNome}')">
+                        <i class="${iconeBotao}"></i> ${textoBotao}
+                    </a>
                     <button class="btn-share" onclick="compartilharOferta('${identificador}', '${p.nome}', '${p.preco}')">
                         <i class="fas fa-share-alt"></i>
                     </button>
                 </div>
             </div>
-        </div>
-    `}).join('');
+        </div>`;
+    }).join('');
 
-    // Se houver um ID na URL ao carregar, rola até ele
-    if (window.location.hash) {
+    // Rola para o topo da listagem ao trocar de página
+    if (pagina > 1) {
+        const ofertasEl = document.getElementById('ofertas');
+        if (ofertasEl) ofertasEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Scroll para produto via hash na URL (compartilhar oferta)
+    if (window.location.hash && pagina === 1) {
         setTimeout(() => {
             const target = document.querySelector(window.location.hash);
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                target.classList.add('highlight-card'); // Opcional: destaque visual
+                target.classList.add('highlight-card');
                 setTimeout(() => target.classList.remove('highlight-card'), 2000);
             }
         }, 500);
     }
+
+    // Esconde paginação se só tem 1 página
+    if (totalPaginas <= 1) {
+        paginacaoEl.style.display = 'none';
+        return;
+    }
+    paginacaoEl.style.display = 'flex';
+
+    // Botões anterior / próximo
+    const btnAnterior = document.getElementById('btn-pag-anterior');
+    const btnProximo  = document.getElementById('btn-pag-proximo');
+    btnAnterior.disabled      = pagina === 1;
+    btnProximo.disabled       = pagina === totalPaginas;
+    btnAnterior.style.opacity = pagina === 1 ? '0.35' : '1';
+    btnProximo.style.opacity  = pagina === totalPaginas ? '0.35' : '1';
+    btnAnterior.style.cursor  = pagina === 1 ? 'default' : 'pointer';
+    btnProximo.style.cursor   = pagina === totalPaginas ? 'default' : 'pointer';
+
+    // Números de página clicáveis
+    const numerados = document.getElementById('paginas-numeradas');
+    numerados.innerHTML = '';
+    for (let i = 1; i <= totalPaginas; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = 'btn-pag-numero' + (i === pagina ? ' ativo' : '');
+        btn.onclick = i === pagina ? null : () => { paginaAtual = i; renderizarPagina(produtosFiltrados, paginaAtual); };
+        numerados.appendChild(btn);
+    }
+}
+
+window.mudarPagina = function(direcao) {
+    const totalPaginas = Math.ceil(produtosFiltrados.length / PRODUTOS_POR_PAGINA);
+    const nova = paginaAtual + direcao;
+    if (nova < 1 || nova > totalPaginas) return;
+    paginaAtual = nova;
+    renderizarPagina(produtosFiltrados, paginaAtual);
+}
+
+/* ==========================================
+   CARREGAMENTO E FILTROS
+   ========================================== */
+function carregarProdutos() {
+    produtosFiltrados = [...meusProdutos];
+    paginaAtual = 1;
+    renderizarPagina(produtosFiltrados, paginaAtual);
 }
 
 function inicializarFiltros() {
@@ -111,6 +183,7 @@ function inicializarFiltros() {
         btn.addEventListener('click', (e) => {
             botoes.forEach(b => b.classList.remove('active'));
             e.currentTarget.classList.add('active');
+            paginaAtual = 1;
             if (e.currentTarget.id === 'btn-filtrar-favoritos') {
                 filtrarFavoritos();
             } else {
@@ -121,64 +194,55 @@ function inicializarFiltros() {
 }
 
 function aplicarFiltroCategoria(cat) {
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        const categoriaCard = card.getAttribute('data-category');
-        card.style.display = (cat === 'todos' || categoriaCard === cat) ? "flex" : "none";
-    });
+    produtosFiltrados = cat === 'todos'
+        ? [...meusProdutos]
+        : meusProdutos.filter(p => p.categoria === cat);
+    paginaAtual = 1;
+    renderizarPagina(produtosFiltrados, paginaAtual);
 }
 
 function filtrarFavoritos() {
-    const cards = document.querySelectorAll('.card');
-    let encontrouAlgum = false;
-    cards.forEach(card => {
-        const btnFav = card.querySelector('.btn-favorite');
-        const match = btnFav.getAttribute('onclick').match(/'([^']+)'/);
-        const idDoCard = match ? match[1] : null;
-        if (listaFavoritosNEB.includes(idDoCard)) {
-            card.style.display = "flex";
-            encontrouAlgum = true;
-        } else {
-            card.style.display = "none";
-        }
-    });
-    if (!encontrouAlgum) {
+    produtosFiltrados = meusProdutos.filter(p => listaFavoritosNEB.includes(String(p.id)));
+    paginaAtual = 1;
+
+    if (produtosFiltrados.length === 0) {
         mostrarNotificacao("Nenhum favorito salvo ainda! ❤️");
-        aplicarFiltroCategoria('todos');
+        produtosFiltrados = [...meusProdutos];
         document.querySelector('[data-categoria="todos"]').classList.add('active');
         document.getElementById('btn-filtrar-favoritos').classList.remove('active');
     }
+    renderizarPagina(produtosFiltrados, paginaAtual);
 }
 
 /* ==========================================
    FILTRO DE PREÇO (DINÂMICO)
    ========================================== */
 function configurarFiltroPrecoDinamico() {
-    const btnToggle = document.getElementById('togglePriceFilter');
-    const panel = document.getElementById('priceFilterPanel');
+    const btnToggle  = document.getElementById('togglePriceFilter');
+    const panel      = document.getElementById('priceFilterPanel');
     const priceRange = document.getElementById('priceRange');
     const priceValue = document.getElementById('priceValue');
 
     if (!priceRange || !meusProdutos.length) return;
 
-    const precosNumericos = meusProdutos.map(p => 
+    const precosNumericos = meusProdutos.map(p =>
         parseFloat(p.preco.replace(/\./g, '').replace(',', '.'))
     );
     const maiorPreco = Math.ceil(Math.max(...precosNumericos));
 
-    priceRange.max = maiorPreco;
+    priceRange.max   = maiorPreco;
     priceRange.value = maiorPreco;
     priceValue.textContent = maiorPreco.toLocaleString('pt-BR');
 
     priceRange.addEventListener('input', () => {
         const maxPrice = parseFloat(priceRange.value);
         priceValue.textContent = maxPrice.toLocaleString('pt-BR');
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            const priceText = card.querySelector('.price-value').textContent;
-            const price = parseFloat(priceText.replace(/\./g, '').replace(',', '.'));
-            card.style.display = (price <= maxPrice) ? "flex" : "none";
+        produtosFiltrados = meusProdutos.filter(p => {
+            const price = parseFloat(p.preco.replace(/\./g, '').replace(',', '.'));
+            return price <= maxPrice;
         });
+        paginaAtual = 1;
+        renderizarPagina(produtosFiltrados, paginaAtual);
     });
 
     if (btnToggle) {
@@ -195,7 +259,7 @@ function configurarFiltroPrecoDinamico() {
 }
 
 /* ==========================================
-   CARROSSEL, BUSCA E UTILITÁRIOS
+   CARROSSEL
    ========================================== */
 let slideIndex = 0;
 function showSlides() {
@@ -212,15 +276,21 @@ function showSlides() {
     setTimeout(showSlides, 6000);
 }
 
+/* ==========================================
+   BUSCA POR TEXTO
+   ========================================== */
 window.filterOffers = function() {
-    let input = document.getElementById('searchInput').value.toLowerCase();
-    let cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        let name = card.getAttribute('data-name').toLowerCase();
-        card.style.display = name.includes(input) ? "flex" : "none";
-    });
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    produtosFiltrados = meusProdutos.filter(p =>
+        p.nome.toLowerCase().includes(input)
+    );
+    paginaAtual = 1;
+    renderizarPagina(produtosFiltrados, paginaAtual);
 }
 
+/* ==========================================
+   UTILITÁRIOS
+   ========================================== */
 window.registrarClique = function(produto, loja) {
     if (typeof gtag === 'function') {
         gtag('event', 'clique_produto', { 'event_label': produto, 'loja_destino': loja });
@@ -228,10 +298,8 @@ window.registrarClique = function(produto, loja) {
 }
 
 window.compartilharOferta = function(id, titulo, preco) {
-    // Pega a URL base (sem o que vem depois da #) e adiciona o ID do produto
-    const urlBase = window.location.href.split('#')[0]; 
+    const urlBase = window.location.href.split('#')[0];
     const urlComAncora = `${urlBase}#${id}`;
-    
     const texto = `🌟 *OFERTA NO MERCADO NEB*\n\n*${titulo}*\n*R$ ${preco}*\n\n🛒 *Link da Oferta:* ${urlComAncora}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
 }
@@ -245,139 +313,3 @@ window.onload = function() {
     configurarFiltroPrecoDinamico();
     showSlides();
 };
-
-// ======= SCRIPT DO FRONT-END (Lógica do Client-Side) =======
-
-// ======= SCRIPT DO FRONT-END (Lógica do Client-Side) =======
-
-const CONFIG = {
-    API_URL: "/.netlify/functions/mercadolivre",
-    LIMITE: 20,
-};
-
-let estado = {
-    aberto: false,
-    pagina: 0,
-    total: 0,
-    carregando: false,
-};
-
-// Funções globais necessárias no HTML (Atribuídas ao window)
-window.abrirAchadinhos = function() {
-    if (!estado.aberto) window.toggleAchadinhos();
-};
-
-window.toggleAchadinhos = function() {
-    estado.aberto = !estado.aberto;
-    const painel = document.getElementById("achadinhos-painel");
-    const btn = document.getElementById("btn-achadinhos");
-    painel.classList.toggle("aberto", estado.aberto);
-    btn.querySelector('.btn-badge').textContent = estado.aberto ? "FECHAR" : "AO VIVO";
-
-    if (estado.aberto && estado.total === 0) {
-        window.buscarML();
-    }
-};
-
-window.buscarML = async function() {
-    if (estado.carregando) return;
-    estado.pagina = 0;
-    await fetchML();
-};
-
-window.paginaML = async function(direcao) {
-    const novaPagina = estado.pagina + direcao;
-    const maxPagina = Math.ceil(estado.total / CONFIG.LIMITE) - 1;
-    if (novaPagina < 0 || novaPagina > maxPagina) return;
-    estado.pagina = novaPagina;
-    await fetchML();
-    document.getElementById("secao-achadinhos").scrollIntoView({ behavior: "smooth" });
-};
-
-async function fetchML() {
-    if (estado.carregando) return;
-    estado.carregando = true;
-
-    const conteudo = document.getElementById("ml-conteudo");
-    const paginacao = document.getElementById("ml-paginacao");
-    conteudo.innerHTML = renderLoading();
-    paginacao.style.display = "none";
-
-    const categoria = document.getElementById("ml-categoria").value;
-    const offset = estado.pagina * CONFIG.LIMITE;
-
-    const params = new URLSearchParams({
-        limite: CONFIG.LIMITE,
-        offset,
-        categoria
-    });
-
-    try {
-        const res = await fetch(`${CONFIG.API_URL}?${params}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-
-        estado.total = data.total;
-        estado.carregando = false;
-
-        if (!data.items || data.items.length === 0) {
-            conteudo.innerHTML = `<div class="ml-erro">😕 Nenhum produto encontrado nesta categoria. Tente outra.</div>`;
-            return;
-        }
-
-        conteudo.innerHTML = renderGrid(data.items);
-        renderPaginacao();
-
-    } catch (err) {
-        estado.carregando = false;
-        conteudo.innerHTML = `
-            <div class="ml-erro">
-                ⚠️ Não foi possível carregar as ofertas.<br>
-                <small>${err.message}</small><br><br>
-                <button onclick="buscarML()" style="
-                    background:#c0392b;color:#fff;border:none;
-                    padding:8px 18px;border-radius:8px;cursor:pointer;font-size:0.9rem;
-                ">Tentar novamente</button>
-            </div>`;
-    }
-}
-
-function renderGrid(items) {
-    return `<div class="ml-grid">${items.map(renderCard).join("")}</div>`;
-}
-
-function renderCard(item) {
-    const preco = item.preco?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    const precOriginal = item.preco_original?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-    return `
-        <a class="ml-card" href="${item.link}" target="_blank" rel="noopener noreferrer">
-            ${item.condicao === "Novo" ? '<span class="ml-badge-novo">NOVO</span>' : ""}
-            <img class="ml-card-img" src="${item.imagem}" alt="${item.titulo}" loading="lazy"
-                onerror="this.style.display='none'" />
-            <div class="ml-card-body">
-                <div class="ml-card-titulo">${item.titulo}</div>
-                ${item.preco_original ? `<div class="ml-card-original">${precOriginal}</div>` : ""}
-                <div class="ml-card-preco">${preco}</div>
-                ${item.desconto ? `<span class="ml-card-desconto">-${item.desconto}% OFF</span>` : ""}
-                ${item.frete_gratis ? `<div class="ml-card-frete">✅ Frete grátis</div>` : ""}
-            </div>
-        </a>
-    `;
-}
-
-function renderPaginacao() {
-    const totalPaginas = Math.ceil(estado.total / CONFIG.LIMITE);
-    if (totalPaginas <= 1) return;
-
-    const paginacao = document.getElementById("ml-paginacao");
-    document.getElementById("ml-info-pagina").textContent = `Página ${estado.pagina + 1} de ${totalPaginas}`;
-    document.getElementById("ml-btn-anterior").disabled = estado.pagina === 0;
-    document.getElementById("ml-btn-proximo").disabled = estado.pagina >= totalPaginas - 1;
-    paginacao.style.display = "flex";
-}
-
-function renderLoading() {
-    return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
-}

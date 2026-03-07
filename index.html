@@ -12,9 +12,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mercado NEB | As Melhores Ofertas</title>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>">
 
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -22,7 +21,7 @@
 <body>
 
     <div id="toast-container"></div>
-    
+
     <header>
         <div class="container header-content">
             <div class="logo">
@@ -31,25 +30,15 @@
             </div>
             <nav>
                 <ul>
-                  <li><a href="#">Início</a></li>
+                    <li><a href="#">Início</a></li>
                     <li>
-                     <a href="achadinhos.html" class="nav-link-destaque">
-                       <i class="fas fa-bolt"></i> Achadinhos
-                     </a>
-                  </li>
-                <li>
-                    <a href="busca.html" style=" background:#0f172a;
-                      color:white; padding:8px 16px;
-                      border-radius:20px; font-weight:800; 
-                      display:flex; 
-                      align-items:center; 
-                      gap:6px; text-decoration:none;">
-                     <i class="fas fa-search"></i> Buscar no ML
-                    </a>
-                </li>
+                        <a href="mais_vendidos.html" class="nav-link-destaque">
+                            <i class="fas fa-bolt"></i> Mais Vendidos
+                        </a>
+                    </li>
                     <li>
-                        <a href="https://wa.me/558532344277?text=Olá,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp">
-                            <i class="fab fa-whatsapp"></i> Contato
+                        <a href="busca.html" class="nav-busca-ml">
+                            <i class="fas fa-search"></i> Buscar no ML
                         </a>
                     </li>
                 </ul>
@@ -59,19 +48,19 @@
 
     <section class="carousel">
         <div class="carousel-inner">
-            <div class="slide active" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
+            <div class="slide active slide-1">
                 <div class="slide-content">
                     <h1>As melhores ofertas do dia</h1>
                     <p>Economize mais, compre melhor no Mercado NEB.</p>
                 </div>
             </div>
-            <div class="slide" style="background: linear-gradient(135deg, #059669, #10b981);">
+            <div class="slide slide-2">
                 <div class="slide-content">
                     <h1>Apoie nosso projeto</h1>
-                    <p style="font-size: 1.5rem; font-weight: 600;">Comprando pelo link você auxilia o núcleo</p>
+                    <p class="slide-2-texto">Comprando pelo link você auxilia o núcleo</p>
                 </div>
             </div>
-            <div class="slide" style="background: linear-gradient(135deg, #7c3aed, #a78bfa);">
+            <div class="slide slide-3">
                 <div class="slide-content">
                     <h1>Promoções em Tecnologia</h1>
                     <p>Eletrônicos e acessórios com preços imbatíveis.</p>
@@ -113,57 +102,25 @@
     </section>
 
     <main class="container">
-
-        <section id="secao-achadinhos">
-
-          <div class="achadinhos-intro">
-            <button id="btn-achadinhos" onclick="toggleAchadinhos()">
-              <span class="btn-icon">🛍️</span>
-              Achadinhos do ML
-              <span class="btn-badge">AO VIVO</span>
-            </button>
-            <p>Ofertas em tempo real direto do Mercado Livre — clique para ver!</p>
-          </div>
-
-          <div id="achadinhos-painel">
-            <div class="ml-header">
-              <h2>⚡ <span>Achadinhos</span> do Dia</h2>
-              <div class="ml-filtros">
-                <select id="ml-categoria" onchange="buscarML()">
-                  <option value="MLB1051" selected>📱 Celulares e Smartphones</option>
-                  <option value="MLB1000">📻 Eletrônicos e Áudio</option>
-                  <option value="MLB1648">💻 Informática</option>
-                  <option value="MLB5726">🔌 Eletrodomésticos</option>
-                  <option value="MLB1574">🏠 Casa e Decoração</option>
-                  <option value="MLB1430">👗 Moda e Calçados</option>
-                  <option value="MLB1276">⚽ Esportes e Fitness</option>
-                  <option value="MLB1144">🎮 Video Games</option>
-                  <option value="MLB1132">🧸 Brinquedos e Hobbies</option>
-                  <option value="MLB263532">🛠️ Ferramentas</option>
-                  <option value="MLB1196">📚 Livros</option>
-                </select>
-                <button onclick="buscarML()">🔍 Buscar</button>
-              </div>
-            </div>
-            <div id="ml-conteudo"></div>
-            <div class="ml-paginacao" id="ml-paginacao" style="display:none">
-              <button id="ml-btn-anterior" onclick="paginaML(-1)">← Anterior</button>
-              <span id="ml-info-pagina"></span>
-              <button id="ml-btn-proximo" onclick="paginaML(1)">Próximo →</button>
-            </div>
-          </div>
-        </section>
         <div id="ofertas">
             <div class="grid-offers" id="offersGrid"></div>
-        </div>
 
+            <!-- PAGINAÇÃO DOS PRODUTOS -->
+            <div id="paginacao-produtos">
+                <button id="btn-pag-anterior" class="btn-pag" onclick="mudarPagina(-1)">← Anterior</button>
+                <div id="paginas-numeradas"></div>
+                <button id="btn-pag-proximo" class="btn-pag" onclick="mudarPagina(1)">Próximo →</button>
+            </div>
+        </div>
     </main>
 
     <footer>
         <div class="container">
             <p>&copy; 2026 Mercado NEB - Todos os direitos reservados.</p>
             <small>Ao comprar através de nossos links, podemos receber uma comissão sem custo adicional para você.</small>
-            <p style="font-weight: 800; margin-top: 10px; color: var(--primary);">Compre com moderação. 🛒</p>
+             <p class="footer-destaque">Compre com moderação. 🛒</p> 
+                <a href="https://wa.me/558532344277?text=Ol%C3%A1,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp" aria-label="Fale conosco no WhatsApp">
+                    <i class="fab fa-whatsapp"></i></a>
         </div>
     </footer>
 

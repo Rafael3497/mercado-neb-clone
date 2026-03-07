@@ -1,7 +1,47 @@
- //*BANCO DE DADOS DE PRODUTOS
-   //*========================================== *//
-
+/* ==========================================
+   BANCO DE DADOS DE PRODUTOS (CORRIGIDO COM ID)
+   ========================================== */
 export const meusProdutos = [
+{
+    id: "p75",
+    nome: "Varal De Chão Grande De Roupas 3 Andares Dobrável Cor Azul Kontuz 1.70 cm",
+    desc: "Dimensões Comprimento (Aberto): 76cm Largura (Aberto): 64cm Altura (Aberto): 1.7m.",
+    preco: "69,90",
+    categoria: "casa",
+    loja: "mercadolivre",
+    img: "https://http2.mlstatic.com/D_NQ_NP_968619-MLA99977372933_112025-O.webp",
+    link: "https://meli.la/2LxDYWF"
+},
+{
+    id: "p74",
+    nome: "i2GO Cabo Magnetic Lightning Homologado MFI 60W, 3A, 1,2m",
+    desc: "O i2GO Cabo Magnetic Lightning é a solução perfeita para consumidores que buscam um cabo resistente, eficiente e certificado pela Apple (MFI). Com 1,2 metros de comprimento.",
+    preco: "46,80",
+    categoria: "casa",
+    loja: "amazon",
+    img: "https://m.media-amazon.com/images/I/71eJwpNG2VL._AC_UF1000,1000_QL80_FMwebp_.jpg",
+    link: "https://amzn.to/4rOsCgj"
+},
+{
+    id: "p73",
+    nome: "Cesto De Roupa Suja com Alças em Bambu com Tampa Forrado para Banheiro, Lavanderia ou Quarto",
+    desc: "Design dobrável: o cesto de bambu é facilmente dobrável, facilitando o armazenamento quando não estiver em uso e ocupando pouco espaço.",
+    preco: "45,90",
+    categoria: "casa",
+    loja: "amazon",
+    img: "https://m.media-amazon.com/images/I/61tRlxwLNwL._AC_UF894,1000_QL80_FMwebp_.jpg",
+    link: "https://amzn.to/47ldsqz"
+},
+{
+    id: "p72",
+    nome: "Tênis Adidas Grand Court Base 3.0 Masculino Leve e Confortável",
+    desc: "O Adidas Grand Court Base 3.0 é o tênis ideal para quem busca estilo clássico com conforto no dia a dia. Leve, versátil e perfeito para compor looks casuais.",
+    preco: "239,99",
+    categoria: "moda",
+    loja: "mercadolivre",
+    img: "https://http2.mlstatic.com/D_NQ_NP_658087-MLB107966974771_032026-O-tnis-adidas-grand-court-base-30-masculino-leve-confortavel.webp",
+    link: "https://meli.la/1TGYFva"
+},
 {
         id: "p71",
         nome: "Álbum de fotos Ical, encadernação fotolivro autocolante, folhas de papel rígido branco, para 20 fotos",
@@ -200,7 +240,7 @@ export const meusProdutos = [
         nome: "Vichy Dercos Energy+, Shampoo Estimulante, Tratamento Antiqueda para Cabelos Fracos e Quebradiços.",
         desc: "Fortalece os Fios com Aminexil, Niacinamida e Vitamina E, 400g.",
         preco: "99,90",
-        categoria: "casa",
+        categoria: "beleza",
         loja: "amazon",
         img: "https://m.media-amazon.com/images/I/51b74hm3qrL._AC_SX342_SY445_QL70_ML2_.jpg",
         link: "https://amzn.to/4aNpIT3"
