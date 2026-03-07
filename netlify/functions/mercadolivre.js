@@ -40,8 +40,9 @@ exports.handler = async (event, context) => {
       }),
     });
     const tokenData = await tokenRes.json();
+    console.log("[TOKEN] status:", tokenRes.status, "| mensagem:", tokenData.message || tokenData.error || "ok");
     if (!tokenData.access_token) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: "Falha ao gerar token" }) };
+      return { statusCode: 401, headers, body: JSON.stringify({ error: "Falha ao gerar token", detalhes: tokenData }) };
     }
     access_token = tokenData.access_token;
   } catch (e) {
@@ -108,8 +109,11 @@ exports.handler = async (event, context) => {
   try {
     // ── FLUXO 1: BUSCA POR TERMO (página busca.html) ──
     if (termoBusca) {
-      const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(termoBusca)}&limit=${limite}&offset=${offset}&sort=${sortParam}`;
+      const sortQuery = sortParam !== "relevance" ? `&sort=${sortParam}` : "";
+      const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(termoBusca)}&limit=${limite}&offset=${offset}${sortQuery}`;
+      console.log("[BUSCA] termo:", termoBusca, "| url:", url);
       const resultado = await fetchSearch(url);
+      console.log("[BUSCA] total:", resultado.total, "| itens:", resultado.items.length);
       return {
         statusCode: 200,
         headers,
@@ -173,7 +177,7 @@ exports.handler = async (event, context) => {
       // Se highlights retornou poucos itens, complementa com busca normal
       if (items.length < limite) {
         const faltam  = limite - items.length;
-        const urlComp = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${faltam}&offset=${offset}&sort=relevance`;
+        const urlComp = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${faltam}&offset=${offset}`;
         try {
           const comp = await fetchSearch(urlComp);
           // Evita duplicatas
@@ -186,7 +190,7 @@ exports.handler = async (event, context) => {
 
     } else {
       // FALLBACK: highlights falhou → busca normal por categoria
-      const url       = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${limite}&offset=${offset}&sort=relevance`;
+      const url       = `https://api.mercadolibre.com/sites/MLB/search?category=${categoria}&limit=${limite}&offset=${offset}`;
       const resultado = await fetchSearch(url);
       items      = resultado.items;
       totalItems = resultado.total;
