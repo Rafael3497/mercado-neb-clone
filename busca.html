@@ -27,7 +27,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .busca-hero::before {
             content: '';
             position: absolute;
@@ -37,7 +36,6 @@
                 radial-gradient(circle at 20% 70%, rgba(99,102,241,0.2) 0%, transparent 45%);
             pointer-events: none;
         }
-
         .busca-hero h1 {
             font-size: 2.2rem;
             font-weight: 800;
@@ -45,9 +43,7 @@
             margin-bottom: 8px;
             position: relative;
         }
-
         .busca-hero h1 span { color: #fbbf24; }
-
         .busca-hero p {
             color: rgba(255,255,255,0.75);
             font-size: 0.95rem;
@@ -66,7 +62,6 @@
             overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.35);
         }
-
         .hero-search-wrap input {
             flex: 1;
             border: none;
@@ -78,9 +73,7 @@
             color: #0f172a;
             background: #fff;
         }
-
         .hero-search-wrap input::placeholder { color: #94a3b8; }
-
         .hero-search-wrap button {
             background: #fbbf24;
             border: none;
@@ -96,7 +89,6 @@
             gap: 8px;
             white-space: nowrap;
         }
-
         .hero-search-wrap button:hover { background: #f59e0b; }
 
         .back-link {
@@ -113,40 +105,75 @@
         }
         .back-link:hover { color: #fff; }
 
-        /* ── SUGESTÕES RÁPIDAS ── */
-        .sugestoes-wrap {
+        /* ── BARRA DE CATEGORIAS ── */
+        .categoria-bar {
+            background: #fff;
+            border-bottom: 1.5px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        /* Anula o max-width do .container dentro da barra */
+        .categoria-bar .container {
+            max-width: 100% !important;
+            padding: 0 !important;
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 16px;
-            position: relative;
+            align-items: center;
+            overflow-x: auto;
+            overflow-y: visible;
+            gap: 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-left: 12px !important;
+            padding-right: 12px !important;
         }
 
-        .sugestao-btn {
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.25);
-            color: #fff;
-            font-size: 0.78rem;
-            font-weight: 600;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
+        .categoria-bar .container::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 14px 16px;
+            border: none;
+            background: transparent;
             font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
-            backdrop-filter: blur(4px);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        .sugestao-btn:hover {
-            background: rgba(255,255,255,0.25);
-            border-color: rgba(255,255,255,0.5);
+        .cat-btn:hover {
+            color: #1d4ed8;
+            background: #f8fafc;
+        }
+
+        .cat-btn.active {
+            color: #1d4ed8;
+            border-bottom-color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .cat-btn span { font-size: 1rem; }
+
+        @media (max-width: 768px) {
+            .cat-btn { padding: 12px 13px; font-size: 0.8rem; gap: 5px; }
+        }
+
+        @media (max-width: 480px) {
+            .cat-btn { padding: 11px 11px; font-size: 0.75rem; gap: 4px; }
+            .cat-btn span { font-size: 0.9rem; }
         }
 
         /* ── ÁREA DE RESULTADOS ── */
-        .resultados-section {
-            padding: 32px 0 60px;
-        }
-
+        .resultados-section { padding: 32px 0 60px; }
         .resultados-header {
             display: flex;
             align-items: center;
@@ -155,15 +182,12 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-
         .resultados-title {
             font-size: 1.2rem;
             font-weight: 800;
             color: #0f172a;
         }
-
         .resultados-title span { color: #3483fa; }
-
         .resultados-count {
             font-size: 0.82rem;
             color: #64748b;
@@ -174,18 +198,8 @@
         }
 
         /* ── ORDENAÇÃO ── */
-        .sort-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sort-wrap label {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #64748b;
-        }
-
+        .sort-wrap { display: flex; align-items: center; gap: 8px; }
+        .sort-wrap label { font-size: 0.82rem; font-weight: 600; color: #64748b; }
         .sort-wrap select {
             border: 1.5px solid #e2e8f0;
             border-radius: 8px;
@@ -198,7 +212,6 @@
             outline: none;
             transition: border-color 0.2s;
         }
-
         .sort-wrap select:focus { border-color: #3483fa; }
 
         /* ── GRID DE PRODUTOS ── */
@@ -208,7 +221,6 @@
             gap: 20px;
             margin-bottom: 30px;
         }
-
         .ml-card {
             background: #fff;
             border-radius: 14px;
@@ -222,13 +234,11 @@
             border: 1.5px solid transparent;
             position: relative;
         }
-
         .ml-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0,0,0,0.13);
             border-color: #3483fa;
         }
-
         .ml-card-img {
             width: 100%;
             height: 185px;
@@ -236,7 +246,6 @@
             background: #f8f9fb;
             padding: 14px;
         }
-
         .ml-card-body {
             padding: 14px;
             flex: 1;
@@ -244,7 +253,6 @@
             flex-direction: column;
             gap: 5px;
         }
-
         .ml-card-titulo {
             font-size: 0.87rem;
             font-weight: 600;
@@ -255,20 +263,17 @@
             overflow: hidden;
             color: #1e293b;
         }
-
         .ml-card-preco {
             font-size: 1.25rem;
             font-weight: 800;
             color: #0f172a;
             margin-top: auto;
         }
-
         .ml-card-original {
             font-size: 0.78rem;
             color: #94a3b8;
             text-decoration: line-through;
         }
-
         .ml-card-desconto {
             display: inline-block;
             background: #dcfce7;
@@ -278,13 +283,11 @@
             padding: 2px 8px;
             border-radius: 5px;
         }
-
         .ml-card-frete {
             font-size: 0.74rem;
             font-weight: 600;
             color: #16a34a;
         }
-
         .ml-badge-novo {
             position: absolute;
             top: 10px;
@@ -309,22 +312,9 @@
             gap: 14px;
             text-align: center;
         }
-
-        .estado-inicial .icone {
-            font-size: 3.5rem;
-            opacity: 0.4;
-        }
-
-        .estado-inicial p {
-            color: #94a3b8;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .estado-inicial small {
-            color: #cbd5e1;
-            font-size: 0.85rem;
-        }
+        .estado-inicial .icone { font-size: 3.5rem; opacity: 0.4; }
+        .estado-inicial p { color: #94a3b8; font-size: 1rem; font-weight: 600; }
+        .estado-inicial small { color: #cbd5e1; font-size: 0.85rem; }
 
         /* ── LOADING / ERRO ── */
         .ml-loading {
@@ -338,7 +328,6 @@
             font-size: 0.95rem;
             font-weight: 600;
         }
-
         .ml-spinner {
             width: 44px;
             height: 44px;
@@ -347,9 +336,7 @@
             border-radius: 50%;
             animation: spin 0.75s linear infinite;
         }
-
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .ml-erro {
             text-align: center;
             padding: 50px 20px;
@@ -369,7 +356,6 @@
             flex-wrap: wrap;
             margin-top: 12px;
         }
-
         .ml-paginacao button {
             border: 1.5px solid #e2e8f0;
             background: #fff;
@@ -382,34 +368,42 @@
             transition: all 0.2s;
             font-family: 'Inter', sans-serif;
         }
-
         .ml-paginacao button:hover:not(:disabled) {
             background: #3483fa;
             color: #fff;
             border-color: #3483fa;
             transform: scale(1.03);
         }
-
-        .ml-paginacao button:disabled {
-            opacity: 0.35;
-            cursor: default;
-        }
-
-        .ml-paginacao span {
-            font-size: 0.88rem;
-            color: #64748b;
-            font-weight: 600;
-        }
+        .ml-paginacao button:disabled { opacity: 0.35; cursor: default; }
+        .ml-paginacao span { font-size: 0.88rem; color: #64748b; font-weight: 600; }
 
         /* ── RESPONSIVO ── */
-        @media (max-width: 600px) {
-            .busca-hero h1 { font-size: 1.6rem; }
-            .hero-search-wrap { border-radius: 12px; }
+        @media (max-width: 768px) {
+            .busca-hero h1 { font-size: 1.8rem; }
             .hero-search-wrap input { padding: 15px 16px; font-size: 0.9rem; }
-            .hero-search-wrap button { padding: 0 18px; font-size: 0.85rem; }
-            .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .ml-card-img { height: 135px; }
+            .hero-search-wrap button { padding: 0 20px; font-size: 0.88rem; }
+            .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
             .resultados-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
+
+        @media (max-width: 600px) {
+            .busca-hero { padding: 30px 0 28px; }
+            .busca-hero h1 { font-size: 1.4rem; }
+            .busca-hero p { font-size: 0.85rem; margin-bottom: 18px; }
+            .hero-search-wrap { border-radius: 12px; }
+            .hero-search-wrap input { padding: 14px 14px; font-size: 0.88rem; }
+            .hero-search-wrap button { padding: 0 16px; font-size: 0.82rem; }
+            .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .ml-card-img { height: 120px; }
+            .ml-card-body { padding: 10px; }
+            .ml-card-titulo { font-size: 0.8rem; }
+            .ml-card-preco { font-size: 1.05rem; }
+            .resultados-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+        }
+
+        @media (max-width: 380px) {
+            .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .ml-card-img { height: 100px; padding: 8px; }
         }
     </style>
 </head>
@@ -442,7 +436,7 @@
                 <i class="fas fa-arrow-left"></i> Voltar ao início
             </a>
             <h1>🔍 Buscar no <span>Mercado Livre</span></h1>
-            <p>Digite o produto que você quer encontrar e veja os resultados em tempo real</p>
+            <p>Selecione uma categoria ou digite o produto que você quer encontrar</p>
 
             <div class="hero-search-wrap">
                 <input
@@ -456,18 +450,50 @@
                     <i class="fas fa-search"></i> Buscar
                 </button>
             </div>
-
-            <div class="sugestoes-wrap">
-                <span style="color:rgba(255,255,255,0.5); font-size:0.78rem; font-weight:600;">Sugestões:</span>
-                <button class="sugestao-btn" onclick="buscaRapida('Fone Bluetooth')">🎧 Fone Bluetooth</button>
-                <button class="sugestao-btn" onclick="buscaRapida('Tênis Adidas')">👟 Tênis Adidas</button>
-                <button class="sugestao-btn" onclick="buscaRapida('Kindle')">📖 Kindle</button>
-                <button class="sugestao-btn" onclick="buscaRapida('Smartwatch')">⌚ Smartwatch</button>
-                <button class="sugestao-btn" onclick="buscaRapida('Air Fryer')">🍳 Air Fryer</button>
-                <button class="sugestao-btn" onclick="buscaRapida('Notebook')">💻 Notebook</button>
-            </div>
         </div>
     </section>
+
+    <!-- BARRA DE CATEGORIAS -->
+    <nav class="categoria-bar">
+        <div class="container">
+            <button class="cat-btn" data-termo="Celulares Smartphones" onclick="buscaRapida(this)">
+                <span>📱</span> Celulares
+            </button>
+            <button class="cat-btn" data-termo="Eletrônicos" onclick="buscaRapida(this)">
+                <span>📻</span> Eletrônicos
+            </button>
+            <button class="cat-btn" data-termo="Notebook Computador" onclick="buscaRapida(this)">
+                <span>💻</span> Informática
+            </button>
+            <button class="cat-btn" data-termo="Eletrodomésticos" onclick="buscaRapida(this)">
+                <span>🔌</span> Eletrodomésticos
+            </button>
+            <button class="cat-btn" data-termo="Casa Decoração" onclick="buscaRapida(this)">
+                <span>🏠</span> Casa
+            </button>
+            <button class="cat-btn" data-termo="Moda Roupas" onclick="buscaRapida(this)">
+                <span>👗</span> Moda
+            </button>
+            <button class="cat-btn" data-termo="Esportes Fitness" onclick="buscaRapida(this)">
+                <span>⚽</span> Esportes
+            </button>
+            <button class="cat-btn" data-termo="Video Games" onclick="buscaRapida(this)">
+                <span>🎮</span> Video Games
+            </button>
+            <button class="cat-btn" data-termo="Brinquedos" onclick="buscaRapida(this)">
+                <span>🧸</span> Brinquedos
+            </button>
+            <button class="cat-btn" data-termo="Ferramentas" onclick="buscaRapida(this)">
+                <span>🛠️</span> Ferramentas
+            </button>
+            <button class="cat-btn" data-termo="Livros" onclick="buscaRapida(this)">
+                <span>📚</span> Livros
+            </button>
+            <button class="cat-btn" data-termo="Beleza Cosméticos" onclick="buscaRapida(this)">
+                <span>💄</span> Beleza
+            </button>
+        </div>
+    </nav>
 
     <!-- RESULTADOS -->
     <main class="resultados-section container">
@@ -489,10 +515,9 @@
         </div>
 
         <div id="resultados-conteudo">
-            <!-- estado inicial -->
             <div class="estado-inicial">
                 <div class="icone">🛒</div>
-                <p>Digite um produto para começar</p>
+                <p>Selecione uma categoria ou busque um produto</p>
                 <small>Buscamos direto no Mercado Livre para você</small>
             </div>
         </div>
@@ -510,9 +535,10 @@
         <div class="container">
             <p>&copy; 2026 Mercado NEB - Todos os direitos reservados.</p>
             <small>Ao comprar através de nossos links, podemos receber uma comissão sem custo adicional para você.</small>
-             <p class="footer-destaque">Compre com moderação. 🛒</p> 
-                <a href="https://wa.me/558532344277?text=Ol%C3%A1,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp" aria-label="Fale conosco no WhatsApp">
-                    <i class="fab fa-whatsapp"></i></a>
+            <p class="footer-destaque">Compre com moderação. 🛒</p>
+            <a href="https://wa.me/558532344277?text=Ol%C3%A1,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp" aria-label="Fale conosco no WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
         </div>
     </footer>
 
@@ -530,16 +556,26 @@
             ordenacao: "relevance",
         };
 
-        function buscaRapida(termo) {
+        function buscaRapida(btn) {
+            // Marca categoria ativa
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const termo = btn.dataset.termo;
             document.getElementById('campoBusca').value = termo;
-            executarBusca();
+            estado.termo    = termo;
+            estado.pagina   = 0;
+            estado.ordenacao = document.getElementById('ordenacao').value;
+            fetchBusca();
         }
 
         function executarBusca() {
             const input = document.getElementById('campoBusca').value.trim();
             if (!input) return;
-            estado.termo   = input;
-            estado.pagina  = 0;
+            // Remove active de todas as categorias ao buscar manualmente
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            estado.termo    = input;
+            estado.pagina   = 0;
             estado.ordenacao = document.getElementById('ordenacao').value;
             fetchBusca();
         }
@@ -599,7 +635,6 @@
                     return;
                 }
 
-                // Exibe header e resultados
                 header.style.display = "flex";
                 document.getElementById('termo-exibido').textContent = `"${estado.termo}"`;
 
@@ -610,7 +645,6 @@
 
                 conteudo.innerHTML = renderGrid(data.items);
 
-                // Rastreamento GA
                 if (typeof gtag === 'function') {
                     gtag('event', 'busca_ml', { search_term: estado.termo });
                 }
@@ -665,7 +699,6 @@
             paginacao.style.display = "flex";
         }
 
-        // Foco automático no campo ao carregar
         window.addEventListener('load', () => {
             document.getElementById('campoBusca').focus();
         });
