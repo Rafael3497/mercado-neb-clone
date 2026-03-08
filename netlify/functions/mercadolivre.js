@@ -134,31 +134,52 @@ exports.handler = async (event, context) => {
 
     // ── FLUXO 1: BUSCA POR TERMO ──────────────────────────────────────────
     if (termoBusca) {
-      // Pede o dobro do limite para garantir que, mesmo com nulls, chegam 20 produtos
-      const limiteBusca = Math.min(limite * 2, 50);
-      console.log("[BUSCA] termo:", termoBusca, "| limiteBusca:", limiteBusca, "| offset:", offset);
+      console.log("[BUSCA] termo:", termoBusca, "| offset:", offset, "| ordenacao:", ordenacao);
 
-      const searchUrl = `https://api.mercadolibre.com/products/search`
-        + `?status=active&site_id=MLB`
-        + `&q=${encodeURIComponent(termoBusca)}`
-        + `&limit=${limiteBusca}`
-        + `&offset=${offset}`;
+      let items      = [];
+      let total      = 0;
+      let buscaOffset = offset;
+      const LOTE     = 50; // máximo que a API aceita por vez
+      const MAX_ITER = 4;  // no máximo 4 tentativas = 200 IDs vasculhados
 
-      const searchRes = await fetch(searchUrl, { headers: authHeaders });
-      const searchRaw = await searchRes.text();
+      for (let iter = 0; iter < MAX_ITER && items.length < limite; iter++) {
+        const searchUrl = `https://api.mercadolibre.com/products/search`
+          + `?status=active&site_id=MLB`
+          + `&q=${encodeURIComponent(termoBusca)}`
+          + `&limit=${LOTE}`
+          + `&offset=${buscaOffset}`;
 
-      if (!searchRes.ok) {
-        console.error("[BUSCA] erro HTTP", searchRes.status, searchRaw.slice(0, 300));
-        throw new Error(`/products/search retornou ${searchRes.status}: ${searchRaw.slice(0, 200)}`);
+        console.log(`[BUSCA] iter ${iter + 1} | offset: ${buscaOffset}`);
+        const searchRes = await fetch(searchUrl, { headers: authHeaders });
+        const searchRaw = await searchRes.text();
+
+        if (!searchRes.ok) {
+          console.error("[BUSCA] erro HTTP", searchRes.status, searchRaw.slice(0, 200));
+          break;
+        }
+
+        const searchData = JSON.parse(searchRaw);
+        total = searchData.paging?.total || total;
+        const ids = (searchData.results || []).map(p => p.id);
+        console.log(`[BUSCA] iter ${iter + 1} | ids recebidos: ${ids.length} | total ML: ${total}`);
+
+        if (ids.length === 0) break; // sem mais resultados
+
+        const loteItems = await buscarProdutosPorIds(ids, "busca_ml");
+        console.log(`[BUSCA] iter ${iter + 1} | itens válidos neste lote: ${loteItems.length}`);
+
+        // Evita duplicatas
+        const existentes = new Set(items.map(i => i.id));
+        const novos = loteItems.filter(i => !existentes.has(i.id));
+        items = [...items, ...novos];
+
+        buscaOffset += LOTE;
+
+        // Se a API não tem mais resultados, para
+        if (buscaOffset >= total) break;
       }
 
-      const searchData = JSON.parse(searchRaw);
-      const total      = searchData.paging?.total || 0;
-      const ids        = (searchData.results || []).map(p => p.id);
-      console.log("[BUSCA] total:", total, "| ids recebidos:", ids.length);
-
-      let items = await buscarProdutosPorIds(ids, "busca_ml");
-      console.log("[BUSCA] itens válidos:", items.length);
+      console.log("[BUSCA] total itens válidos acumulados:", items.length);
 
       // Corta exatamente no limite solicitado
       items = items.slice(0, limite);
@@ -174,6 +195,7 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ total, items }),
       };
     }
+
 
     // ── FLUXO 2: MAIS VENDIDOS POR CATEGORIA ─────────────────────────────
     let items      = [];
