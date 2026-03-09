@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Mercado NEB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1d4ed8;
+        }
+
+        label {
+            display: block;
+            margin-top: 14px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #1d4ed8;
+            outline: none;
+        }
+
+        textarea { height: 80px; resize: vertical; }
+
+        .preview {
+            text-align: center;
+            margin: 14px 0 4px;
+            min-height: 130px;
+            background: #f8fafc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview img {
+            max-width: 120px;
+            max-height: 120px;
+            object-fit: contain;
+            display: none;
+        }
+
+        .preview span {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        button {
+            margin-top: 24px;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            background: #1d4ed8;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: #1b4f72; }
+        button:disabled { background: #94a3b8; cursor: default; }
+
+        .msg {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .msg.sucesso { background: #dcfce7; color: #166534; }
+        .msg.erro    { background: #fef2f2; color: #991b1b; }
+
+        .preco-dica {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🛒 Cadastro de Produto</h2>
+
+    <label>Nome do produto *</label>
+    <input id="nome" placeholder="Ex: Fone Bluetooth JBL Tune 510BT">
+
+    <label>Preço *</label>
+    <input id="preco" placeholder="Ex: 189,90">
+    <div class="preco-dica">Use vírgula como decimal: 189,90 — não use R$</div>
+
+    <label>URL da imagem *</label>
+    <input id="img" placeholder="https://..." oninput="atualizarPreview()">
+
+    <div class="preview">
+        <img id="preview-img">
+        <span id="preview-txt">A imagem aparece aqui</span>
+    </div>
+
+    <label>Link afiliado *</label>
+    <input id="link" placeholder="https://amzn.to/... ou https://meli.la/...">
+
+    <label>Categoria *</label>
+    <select id="categoria">
+        <option value="">— Selecione —</option>
+        <option value="casa">Casa</option>
+        <option value="eletronicos">Eletrônicos</option>
+        <option value="fitness">Fitness</option>
+        <option value="escritorio">Escritório</option>
+        <option value="moda">Moda</option>
+        <option value="beleza">Beleza</option>
+        <option value="saude">Saúde</option>
+        <option value="livros">Livros</option>
+        <option value="outros">Outros</option>
+    </select>
+
+    <label>Loja *</label>
+    <select id="loja">
+        <option value="">— Selecione —</option>
+        <option value="amazon">Amazon</option>
+        <option value="mercadolivre">Mercado Livre</option>
+    </select>
+
+    <label>Descrição</label>
+    <textarea id="desc" placeholder="Breve descrição do produto (opcional)"></textarea>
+
+    <button id="btn-salvar" onclick="salvarProduto()">Salvar Produto</button>
+
+    <div class="msg" id="msg"></div>
+</div>
+
+<script>
+    // ← Cole aqui a URL do seu Google Apps Script
+    const API = "https://script.google.com/macros/s/AKfycbwEwZbiypGvomLgPy0xloqgtS9iAnSNHnYbaUjtASM8jYX1R6ofkqo2NE0qfLmYK0KV/exec";
+
+    function atualizarPreview() {
+        const url = document.getElementById('img').value.trim();
+        const img = document.getElementById('preview-img');
+        const txt = document.getElementById('preview-txt');
+        if (url) {
+            img.src = url;
+            img.style.display = 'block';
+            txt.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+            txt.style.display = 'block';
+        }
+    }
+
+    function mostrarMsg(texto, tipo) {
+        const el = document.getElementById('msg');
+        el.textContent = texto;
+        el.className = 'msg ' + tipo;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 4000);
+    }
+
+    function validar(produto) {
+        if (!produto.nome)       return 'Preencha o nome do produto.';
+        if (!produto.preco)      return 'Preencha o preço.';
+        if (!produto.img)        return 'Preencha a URL da imagem.';
+        if (!produto.link)       return 'Preencha o link afiliado.';
+        if (!produto.categoria)  return 'Selecione uma categoria.';
+        if (!produto.loja)       return 'Selecione a loja.';
+        return null;
+    }
+
+    async function salvarProduto() {
+        const btn = document.getElementById('btn-salvar');
+
+        const produto = {
+            // O ID sequencial é gerado pelo Apps Script na planilha
+            nome:      document.getElementById('nome').value.trim(),
+            preco:     document.getElementById('preco').value.trim(),
+            img:       document.getElementById('img').value.trim(),
+            link:      document.getElementById('link').value.trim(),
+            categoria: document.getElementById('categoria').value,
+            loja:      document.getElementById('loja').value,
+            desc:      document.getElementById('desc').value.trim(),
+        };
+
+        const erro = validar(produto);
+        if (erro) { mostrarMsg(erro, 'erro'); return; }
+
+        btn.disabled = true;
+        btn.textContent = 'Salvando...';
+
+        try {
+            await fetch(API, {
+                method: 'POST',
+                mode: 'no-cors', // necessário para Apps Script
+                body: JSON.stringify(produto),
+            });
+
+            mostrarMsg('✅ Produto salvo com sucesso!', 'sucesso');
+
+            // Limpa o formulário
+            ['nome','preco','img','link','desc'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('categoria').value = '';
+            document.getElementById('loja').value = '';
+            document.getElementById('preview-img').style.display = 'none';
+            document.getElementById('preview-txt').style.display = 'block';
+
+        } catch (err) {
+            mostrarMsg('❌ Erro ao salvar. Verifique a URL do Apps Script.', 'erro');
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Salvar Produto';
+    }
+</script>
+
+</body>
+</html>
