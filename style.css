@@ -891,3 +891,214 @@ footer { background: white; padding: 40px; text-align: center; border-top: 1px s
     margin-top: 10px;
     color: var(--primary);
 }
+
+/* --- BOTÕES DE COMPRA POR LOJA --- */
+.btn-buy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-buy-mercadolivre {
+    background: #3483fa;
+    color: white !important;
+}
+
+.btn-buy-mercadolivre:hover {
+    background: #2968c8 !important;
+}
+
+.btn-buy-amazon {
+    background: #ff9900;
+    color: #000 !important;
+}
+
+.btn-buy-amazon:hover {
+    background: #e68900 !important;
+}
+
+.btn-buy i {
+    font-size: 1rem;
+}
+
+/* ══════════════════════════════════════════════════════
+   BARRA DE CATEGORIAS — busca.html / mais_vendidos.html
+   ══════════════════════════════════════════════════════ */
+
+.categoria-bar {
+    background: #fff;
+    border-bottom: 1.5px solid #e2e8f0;
+    position: sticky;
+    top: 65px;
+    z-index: 90;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    width: 100%;
+}
+
+/* Anula max-width do .container para a barra rolar livremente */
+.categoria-bar .container {
+    max-width: 100% !important;
+    padding: 0 8px !important;
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.categoria-bar .container::-webkit-scrollbar { display: none; }
+
+.cat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 16px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.cat-btn:hover {
+    color: #1d4ed8;
+    background: #f8fafc;
+}
+
+.cat-btn.active {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
+    background: #eff6ff;
+}
+
+.cat-btn span,
+.cat-btn .cat-emoji { font-size: 1rem; }
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVIDADE — busca.html / mais_vendidos.html
+   ══════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    /* Categorias */
+    .categoria-bar { top: 58px; }
+    .cat-btn { padding: 12px 13px; font-size: 0.8rem; gap: 5px; }
+
+    /* Hero busca */
+    .busca-hero h1 { font-size: 1.8rem; }
+    .hero-search-wrap input { padding: 15px 16px; font-size: 0.9rem; }
+    .hero-search-wrap button { padding: 0 20px; font-size: 0.88rem; }
+    .resultados-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+    /* Hero mais vendidos */
+    .mais-vendidos-hero h1 { font-size: 1.9rem; }
+    .vitrine-header { flex-direction: column; align-items: flex-start; }
+
+    /* Grid ML */
+    .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+
+@media (max-width: 600px) {
+    /* Categorias */
+    .categoria-bar { top: 56px; }
+    .cat-btn { padding: 11px 10px; font-size: 0.75rem; gap: 4px; }
+    .cat-btn span,
+    .cat-btn .cat-emoji { font-size: 0.85rem; }
+
+    /* Hero busca */
+    .busca-hero { padding: 28px 0 24px; }
+    .busca-hero h1 { font-size: 1.4rem; }
+    .busca-hero p { font-size: 0.85rem; margin-bottom: 16px; }
+    .hero-search-wrap { border-radius: 12px; }
+    .hero-search-wrap input { padding: 14px 14px; font-size: 0.88rem; }
+    .hero-search-wrap button { padding: 0 16px; font-size: 0.82rem; }
+    .resultados-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+
+    /* Hero mais vendidos */
+    .mais-vendidos-hero h1 { font-size: 1.5rem; }
+    .vitrine-header { flex-direction: column; align-items: flex-start; }
+
+    /* Grid ML */
+    .ml-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .ml-card-img { height: 120px; }
+    .ml-card-body { padding: 10px; }
+    .ml-card-titulo { font-size: 0.8rem; }
+    .ml-card-preco { font-size: 1.05rem; }
+}
+
+@media (max-width: 380px) {
+    .cat-btn { padding: 10px 9px; font-size: 0.72rem; }
+    .ml-grid { gap: 8px; }
+    .ml-card-img { height: 100px; padding: 8px; }
+}
+
+/* --- BARRA DE CATEGORIAS (busca.html / mais_vendidos.html) --- */
+.categoria-bar {
+    background: #fff;
+    border-bottom: 1.5px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.categoria-bar .container {
+    max-width: 100% !important;
+    padding: 0 12px !important;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: visible;
+    gap: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.categoria-bar .container::-webkit-scrollbar { display: none; }
+
+.cat-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 14px 16px;
+    border: none;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.cat-btn:hover {
+    color: #1d4ed8;
+    background: #f8fafc;
+}
+
+.cat-btn.active {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
+    background: #eff6ff;
+}
+
+.cat-btn span { font-size: 1rem; }
+
+@media (max-width: 768px) {
+    .cat-btn { padding: 12px 13px; font-size: 0.8rem; gap: 5px; }
+}
+
+@media (max-width: 480px) {
+    .cat-btn { padding: 11px 11px; font-size: 0.75rem; gap: 4px; }
+    .cat-btn span { font-size: 0.9rem; }
+}
