@@ -3,10 +3,10 @@
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QTCN9HXRNL"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-QTCN9HXRNL');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QTCN9HXRNL');
     </script>
 
     <meta charset="UTF-8">
@@ -22,6 +22,7 @@
 
     <div id="toast-container"></div>
 
+    <!-- HEADER -->
     <header>
         <div class="container header-content">
             <div class="logo">
@@ -46,6 +47,7 @@
         </div>
     </header>
 
+    <!-- CARROSSEL -->
     <section class="carousel">
         <div class="carousel-inner">
             <div class="slide active slide-1">
@@ -69,6 +71,7 @@
         </div>
     </section>
 
+    <!-- BUSCA E FILTROS -->
     <section class="search-section container">
         <div class="search-box">
             <i class="fas fa-search"></i>
@@ -101,11 +104,11 @@
         </div>
     </section>
 
+    <!-- GRID DE PRODUTOS -->
     <main class="container">
         <div id="ofertas">
             <div class="grid-offers" id="offersGrid"></div>
 
-            <!-- PAGINAÇÃO DOS PRODUTOS -->
             <div id="paginacao-produtos">
                 <button id="btn-pag-anterior" class="btn-pag" onclick="mudarPagina(-1)">← Anterior</button>
                 <div id="paginas-numeradas"></div>
@@ -114,17 +117,19 @@
         </div>
     </main>
 
+    <!-- FOOTER -->
     <footer>
         <div class="container">
             <p>&copy; 2026 Mercado NEB - Todos os direitos reservados.</p>
             <small>Ao comprar através de nossos links, podemos receber uma comissão sem custo adicional para você.</small>
-             <p class="footer-destaque">Compre com moderação. 🛒</p> 
-                <a href="https://wa.me/558532344277?text=Ol%C3%A1,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp" aria-label="Fale conosco no WhatsApp">
-                    <i class="fab fa-whatsapp"></i></a>
+            <p class="footer-destaque">Compre com moderação. 🛒</p>
+            <a href="https://wa.me/558532344277?text=Ol%C3%A1,%20vim%20pelo%20site%20Mercado%20NEB" target="_blank" class="nav-whatsapp" aria-label="Fale conosco no WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
         </div>
     </footer>
 
-    <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,155 @@
+/* =====================================================
+   MERCADO NEB — busca.css
+   ===================================================== */
+
+/* ── HERO ── */
+.busca-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+    padding: 44px 0 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.busca-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 75% 30%, rgba(251,191,36,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 20% 70%, rgba(99,102,241,0.2) 0%, transparent 45%);
+    pointer-events: none;
+}
+
+.busca-hero h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.busca-hero h1 span { color: #fbbf24; }
+
+.busca-hero p {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+    position: relative;
+}
+
+/* ── CAMPO DE BUSCA HERO ── */
+.hero-search-wrap {
+    position: relative;
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+}
+
+.hero-search-wrap input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 18px 22px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: #0f172a;
+    background: #fff;
+}
+
+.hero-search-wrap input::placeholder { color: #94a3b8; }
+
+.hero-search-wrap button {
+    background: #fbbf24;
+    border: none;
+    padding: 0 28px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #0f172a;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.hero-search-wrap button:hover { background: #f59e0b; }
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.83rem;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: color 0.2s;
+    position: relative;
+}
+
+.back-link:hover { color: #fff; }
+
+/* ── RESULTADOS ── */
+.resultados-section { padding: 32px 0 60px; }
+
+.resultados-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.resultados-title { font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+.resultados-title span { color: #3483fa; }
+
+.resultados-count {
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 600;
+    background: #f1f5f9;
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+/* ── ORDENAÇÃO ── */
+.sort-wrap { display: flex; align-items: center; gap: 8px; }
+.sort-wrap label { font-size: 0.82rem; font-weight: 600; color: #64748b; }
+
+.sort-wrap select {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    color: #0f172a;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.sort-wrap select:focus { border-color: #3483fa; }
+
+/* ── ESTADO INICIAL ── */
+.estado-inicial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 70px 20px;
+    gap: 14px;
+    text-align: center;
+}
+
+.estado-inicial .icone { font-size: 3.5rem; opacity: 0.4; }
+.estado-inicial p { color: #94a3b8; font-size: 1rem; font-weight: 600; }
+.estado-inicial small { color: #cbd5e1; font-size: 0.85rem; }

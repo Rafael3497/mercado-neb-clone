@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Painel de Produtos</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f4f8;
+padding:40px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+}
+
+input,select,textarea{
+
+width:100%;
+padding:10px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:6px;
+
+}
+
+button{
+
+margin-top:20px;
+width:100%;
+padding:12px;
+border:none;
+background:#2e86de;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+
+}
+
+button:hover{
+
+background:#1b4f72;
+
+}
+
+.preview{
+
+text-align:center;
+margin:10px;
+
+}
+
+.preview img{
+
+max-width:120px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Cadastro de Produto</h2>
+
+<div class="preview">
+<img id="preview">
+</div>
+
+<input id="nome" placeholder="Nome do produto">
+
+<input id="preco" placeholder="Preço">
+
+<input id="urlImagem" placeholder="URL da imagem">
+
+<input id="linkAfiliado" placeholder="Link afiliado">
+
+<select id="categoria">
+
+<option value="casa">Casa</option>
+<option value="fitness">Fitness</option>
+<option value="eletronicos">Eletrônicos</option>
+<option value="utilidades">Utilidades</option>
+
+</select>
+
+<select id="loja">
+
+<option value="amazon">Amazon</option>
+<option value="mercadolivre">Mercado Livre</option>
+
+</select>
+
+<textarea id="descricao" placeholder="Descrição"></textarea>
+
+<button onclick="salvarProduto()">
+
+Salvar Produto
+
+</button>
+
+</div>
+
+<script>
+
+const api="https://script.google.com/macros/s/AKfycbwEwZbiypGvomLgPy0xloqgtS9iAnSNHnYbaUjtASM8jYX1R6ofkqo2NE0qfLmYK0KV/exec"
+
+document
+.getElementById("urlImagem")
+.addEventListener("input",function(){
+
+document.getElementById("preview").src=this.value
+
+})
+
+function gerarID(){
+
+return "p"+Math.floor(Math.random()*100000)
+
+}
+
+async function salvarProduto(){
+
+const produto={
+
+id:gerarID(),
+nome:document.getElementById("nome").value,
+preco:document.getElementById("preco").value,
+urlImagem:document.getElementById("urlImagem").value,
+linkAfiliado:document.getElementById("linkAfiliado").value,
+categoria:document.getElementById("categoria").value,
+loja:document.getElementById("loja").value,
+descricao:document.getElementById("descricao").value
+
+}
+
+await fetch(api,{
+
+method:"POST",
+body:JSON.stringify(produto)
+
+})
+
+alert("Produto cadastrado!")
+
+}
+
+</script>
+
+</body>
+</html>

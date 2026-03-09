@@ -1,0 +1,112 @@
+/* =====================================================
+   MERCADO NEB — mais_vendidos.css
+   ===================================================== */
+
+/* ── HERO ── */
+.mais-vendidos-hero {
+    background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+    padding: 48px 0 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.mais-vendidos-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(251,191,36,0.18) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.mais-vendidos-hero h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.15;
+    position: relative;
+}
+
+.mais-vendidos-hero h1 span { color: #fbbf24; }
+
+.mais-vendidos-hero p {
+    color: rgba(255,255,255,0.85);
+    font-size: 1rem;
+    position: relative;
+}
+
+/* ── LIVE BADGE ── */
+.live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 30px;
+    margin-bottom: 16px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+}
+
+.live-dot {
+    width: 8px; height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+    box-shadow: 0 0 0 0 rgba(74,222,128,0.7);
+}
+
+@keyframes pulse-dot {
+    0%   { box-shadow: 0 0 0 0 rgba(74,222,128,0.7); }
+    70%  { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+    100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+}
+
+/* ── BACK LINK ── */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.back-link:hover { opacity: 1; }
+
+/* ── VITRINE ── */
+.vitrine-section { padding: 32px 0 60px; }
+
+.vitrine-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.vitrine-title { font-size: 1.3rem; font-weight: 800; color: #0f172a; }
+.vitrine-title span { color: #3483fa; }
+
+.vitrine-count {
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 600;
+    background: #f1f5f9;
+    padding: 5px 12px;
+    border-radius: 20px;
+}
