@@ -142,6 +142,44 @@ nav ul li a::after {
     transition: var(--transition);
 }
 
+/* Estilização específica do botão Amazon para integração */
+        .amazon-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: #FF9900;
+            color: #111111 !important; /* Força a cor preta sobre os links da nav */
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 14px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+            margin-left: 10px;
+        }
+
+        .amazon-nav-btn:hover {
+            background-color: #e68a00;
+            color: #000 !important;
+        }
+
+        .amazon-nav-btn i {
+            font-size: 18px;
+            margin-right: 8px;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .amazon-nav-btn {
+                margin-left: 0;
+                margin-top: 10px;
+          }
+}
+
 .nav-busca-ml:hover { background: #1e293b; transform: scale(1.05); }
 .nav-busca-ml::after { display: none; }
 
