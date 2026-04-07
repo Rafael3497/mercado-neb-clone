@@ -4,22 +4,24 @@
 
 /* --- VARIÁVEIS E BASE --- */
 :root {
-    --primary: #1d4ed8;
-    --primary-dark: #1e40af;
+    --primary: #2563eb;       /* Brighter primary blue */
+    --primary-dark: #1d4ed8; 
     --secondary: #f8fafc;
-    --accent: #fbbf24;
-    --success: #2e7d32;
+    --accent: #f59e0b;        /* Warmer accent */
+    --success: #10b981;
     --text: #0f172a;
-    --text-light: #64748b;
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --text-light: #475569;
+    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Apple-like smooth bezier */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f1f5f9;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background-attachment: fixed;
     color: var(--text);
     scroll-behavior: smooth;
     overflow-x: hidden;
@@ -31,9 +33,12 @@ body {
    HEADER
    ===================================================== */
 header {
-    background: white;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -191,7 +196,16 @@ nav ul li a::after {
 /* =====================================================
    CARROSSEL
    ===================================================== */
-.carousel { position: relative; height: 400px; overflow: hidden; background: #000; }
+.carousel { 
+    position: relative; 
+    height: 400px; 
+    overflow: hidden; 
+    background: #000;
+    max-width: 1160px;
+    margin: 20px auto 40px auto;
+    border-radius: 24px;
+    box-shadow: var(--shadow-hover);
+}
 
 .slide {
     position: absolute;
@@ -200,12 +214,25 @@ nav ul li a::after {
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 1.2s ease-in-out;
+    transform: scale(1.05);
+    transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
 }
 
-.slide.active { opacity: 1; }
+.slide.active { opacity: 1; transform: scale(1); }
 
-.slide-content { text-align: center; color: white; padding: 0 25px; max-width: 900px; }
+.slide-content { 
+    text-align: center; 
+    color: white; 
+    padding: 0 25px; 
+    max-width: 900px;
+    transform: translateY(20px);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+}
+
+.slide.active .slide-content {
+    transform: translateY(0);
+}
+
 .slide-content h1 { font-size: 3rem; font-weight: 800; margin-bottom: 15px; line-height: 1.1; }
 .slide-content p { font-size: 1.2rem; line-height: 1.4; opacity: 0.9; }
 
@@ -312,23 +339,29 @@ nav ul li a::after {
 }
 
 .card {
-    background: white;
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
     overflow: hidden;
     transition: var(--transition);
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: var(--shadow-soft);
     display: flex;
     flex-direction: column;
-    animation: fadeInCard 0.5s ease backwards;
+    animation: fadeInCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
     scroll-margin-top: 100px;
+    backdrop-filter: blur(10px);
 }
 
 @keyframes fadeInCard {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.card:hover { 
+    transform: translateY(-8px); 
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(255, 255, 255, 1);
+}
 
 .card-img {
     width: 100%;
@@ -406,7 +439,7 @@ nav ul li a::after {
     color: white;
     text-decoration: none;
     padding: 14px;
-    border-radius: 12px;
+    border-radius: 14px;
     text-align: center;
     font-weight: 700;
     transition: var(--transition);
@@ -414,9 +447,30 @@ nav ul li a::after {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
 }
 
-.btn-buy:hover { background: var(--primary-dark); transform: scale(1.02); }
+.btn-buy:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
+
+.btn-buy:active { transform: scale(0.97); }
+
+.btn-buy::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s, height 0.4s;
+}
+
+.btn-buy:active::after {
+    width: 200px; height: 200px;
+    opacity: 0;
+}
 
 .btn-buy i { font-size: 1rem; }
 
@@ -569,22 +623,24 @@ nav ul li a::after {
 }
 
 .ml-card {
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
     overflow: hidden;
-    transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+    transition: var(--transition);
     display: flex;
     flex-direction: column;
     text-decoration: none;
     color: inherit;
-    border: 1.5px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
     position: relative;
+    animation: fadeInCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 .ml-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.13);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
     border-color: #3483fa;
 }
 
@@ -636,6 +692,40 @@ nav ul li a::after {
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
+
+/* =====================================================
+   SKELETON LOADERS
+   ===================================================== */
+.skeleton {
+    background: #e2e8f0;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.skeleton-img { height: 180px; width: 100%; border-radius: 12px; }
+.skeleton-title { height: 22px; width: 80%; }
+.skeleton-title-short { height: 22px; width: 50%; border-radius: 8px; }
+.skeleton-price { height: 30px; width: 40%; margin-top: 15px; }
+.skeleton-btn { height: 45px; width: 100%; border-radius: 14px; margin-top: auto; }
 
 /* Loading / Erro ML */
 .ml-loading {

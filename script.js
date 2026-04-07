@@ -164,11 +164,18 @@ window.mudarPagina = function(direcao) {
 async function carregarProdutos() {
     const grid = document.getElementById('offersGrid');
     if (grid) {
-        grid.innerHTML = `
-            <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#64748b;">
-                <i class="fas fa-spinner fa-spin" style="font-size:2rem;margin-bottom:12px;display:block;"></i>
-                Carregando ofertas...
+        let skeletons = '';
+        for(let i=0; i<8; i++) {
+            skeletons += `
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-img"></div>
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-title-short"></div>
+                <div class="skeleton skeleton-price"></div>
+                <div class="skeleton skeleton-btn"></div>
             </div>`;
+        }
+        grid.innerHTML = skeletons;
     }
 
     try {

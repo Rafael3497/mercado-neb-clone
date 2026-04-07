@@ -143,7 +143,18 @@ function renderPaginacao() {
 }
 
 function renderLoading() {
-    return `<div class="ml-loading"><div class="ml-spinner"></div>Carregando ofertas do Mercado Livre...</div>`;
+    let skeletons = '';
+    for(let i=0; i<8; i++) {
+        skeletons += `
+        <div class="skeleton-card">
+            <div class="skeleton skeleton-img"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-title-short"></div>
+            <div class="skeleton skeleton-price"></div>
+            <div class="skeleton skeleton-btn"></div>
+        </div>`;
+    }
+    return `<div class="ml-grid">${skeletons}</div>`;
 }
 
 /* ── Init ── */

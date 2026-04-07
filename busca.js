@@ -65,7 +65,18 @@ async function fetchBusca() {
     const header    = document.getElementById('resultados-header');
     const countEl   = document.getElementById('resultados-count');
 
-    conteudo.innerHTML      = `<div class="ml-loading"><div class="ml-spinner"></div>Buscando "${estado.termo}" no Mercado Livre...</div>`;
+    let skeletons = '';
+    for(let i=0; i<8; i++) {
+        skeletons += `
+        <div class="skeleton-card">
+            <div class="skeleton skeleton-img"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-title-short"></div>
+            <div class="skeleton skeleton-price"></div>
+            <div class="skeleton skeleton-btn"></div>
+        </div>`;
+    }
+    conteudo.innerHTML = `<div class="ml-grid">${skeletons}</div>`;
     paginacao.style.display = 'none';
     header.style.display    = 'none';
 
